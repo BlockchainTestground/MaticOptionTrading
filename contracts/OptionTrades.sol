@@ -3,17 +3,12 @@ pragma solidity 0.8.0;
 import "./dependencies/LinkTokenInterface.sol";
 import "./dependencies/AggregatorV3Interface.sol";
 
-contract chainlinkOptions {
+contract OptionTrades {
     //Pricefeed interfaces
-    AggregatorV3Interface internal ethFeed;
-    AggregatorV3Interface internal linkFeed;
+    AggregatorV3Interface internal maticFeed;
     //Interface for LINK token functions
     LinkTokenInterface internal LINK;
-    uint ethPrice;
-    uint linkPrice;
-    //Precomputing hash of strings
-    bytes32 ethHash = keccak256(abi.encodePacked("ETH"));
-    bytes32 linkHash = keccak256(abi.encodePacked("LINK"));
+    uint maticPrice;
     address payable contractAddr;
     
     //Options stored in arrays of structs
@@ -29,45 +24,32 @@ contract chainlinkOptions {
         address payable writer; //Issuer of option
         address payable buyer; //Buyer of option
     }
-    option[] public ethOpts;
-    option[] public linkOpts;
+    option[] public maticOpts;
 
     //Kovan feeds: https://docs.chain.link/docs/reference-contracts
     constructor() public {
-        //ETH/USD Kovan feed
-        ethFeed = AggregatorV3Interface(0x9326BFA02ADD2366b30bacB125260Af641031331);
-        //LINK/USD Kovan feed
-        linkFeed = AggregatorV3Interface(0x396c5E36DD0a0F5a5D33dae44368D4193f69a1F0);
-        //LINK token address on Kovan
-        LINK = LinkTokenInterface(0xa36085F69e2889c224210F603D836748e7dC0088);
+        // -- Matic --
+        //MATIC/USD feed
+        maticFeed = AggregatorV3Interface(0xAB594600376Ec9fD91F8e885dADF0CE036862dE0);
+        //LINK token address
+        LINK = LinkTokenInterface(0xb0897686c545045aFc77CF20eC7A532E3120E0F1);
+        // -- Mumbai --
+        //MATIC/USD feed
+        //maticFeed = AggregatorV3Interface(0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada);
+        //LINK token address
+        //LINK = LinkTokenInterface(0x326C977E6efc84E512bB9C30f76E30c160eD06FB);
         contractAddr = payable(address(this));
     }
-
-    //Returns the latest ETH price
-    function getEthPrice() public view returns (uint) {
-        (
-            uint80 roundID, 
-            int price,
-            uint startedAt,
-            uint timeStamp,
-            uint80 answeredInRound
-        ) = ethFeed.latestRoundData();
-        // If the round is not complete yet, timestamp is 0
-        require(timeStamp > 0, "Round not complete");
-        //Price should never be negative thus cast int to unit is ok
-        //Price is 8 decimal places and will require 1e10 correction later to 18 places
-        return uint(price);
-    }
     
-    //Returns the latest LINK price
-    function getLinkPrice() public view returns (uint) {
+    //Returns the latest MATIC price
+    function getMaticPrice() public view returns (uint) {
         (
             uint80 roundID, 
             int price,
             uint startedAt,
             uint timeStamp,
             uint80 answeredInRound
-        ) = linkFeed.latestRoundData();
+        ) = maticFeed.latestRoundData();
         // If the round is not complete yet, timestamp is 0
         require(timeStamp > 0, "Round not complete");
         //Price should never be negative thus cast int to unit is ok
@@ -77,133 +59,74 @@ contract chainlinkOptions {
     
     //Updates prices to latest
     function updatePrices() internal {
-        ethPrice = getEthPrice();
-        linkPrice = getLinkPrice();
+        maticPrice = getMaticPrice();
     }
     
     //Allows user to write a covered call option
     //Takes which token, a strike price(USD per token w/18 decimal places), premium(same unit as token), expiration time(unix) and how many tokens the contract is for
-    function writeOption(string memory token, uint strike, uint premium, uint expiry, uint tknAmt) public payable {
-        bytes32 tokenHash = keccak256(abi.encodePacked(token));
-        require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
+    function writeOption(uint strike, uint premium, uint expiry, uint tknAmt) public payable {
         updatePrices();
-        if (tokenHash == ethHash) {
-            require(msg.value == tknAmt, "Incorrect amount of ETH supplied"); 
-            uint latestCost = (strike * tknAmt) / (ethPrice * 10**10); //current cost to exercise in ETH, decimal places corrected
-            ethOpts.push(option(strike, premium, expiry, tknAmt, false, false, ethOpts.length, latestCost, payable(msg.sender), payable(address(0))));
-        } else {
-            require(LINK.transferFrom(msg.sender, contractAddr, tknAmt), "Incorrect amount of LINK supplied");
-            uint latestCost = (strike * tknAmt) / (linkPrice * 10**10);
-            linkOpts.push(option(strike, premium, expiry, tknAmt, false, false, linkOpts.length, latestCost, payable(msg.sender), payable(address(0))));
-        }
+        require(msg.value == tknAmt, "Incorrect amount of Matic supplied"); 
+        uint latestCost = (strike * tknAmt) / (maticPrice * 10**10); //current cost to exercise in Matic, decimal places corrected
+        maticOpts.push(option(strike, premium, expiry, tknAmt, false, false, maticOpts.length, latestCost, payable(msg.sender), payable(address(0))));
     }
     
     //Allows option writer to cancel and get their funds back from an unpurchased option
-    function cancelOption(string memory token, uint ID) public payable {
-        bytes32 tokenHash = keccak256(abi.encodePacked(token));
-        require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
-        if (tokenHash == ethHash) {
-            require(msg.sender == ethOpts[ID].writer, "You did not write this option");
-            //Must not have already been canceled or bought
-            require(!ethOpts[ID].canceled && ethOpts[ID].buyer == address(0), "This option cannot be canceled");
-            ethOpts[ID].writer.transfer(ethOpts[ID].amount);
-            ethOpts[ID].canceled = true;
-        } else {
-            require(msg.sender == linkOpts[ID].writer, "You did not write this option");
-            require(!linkOpts[ID].canceled && linkOpts[ID].buyer == address(0), "This option cannot be canceled");
-            require(LINK.transferFrom(address(this), linkOpts[ID].writer, linkOpts[ID].amount), "Incorrect amount of LINK sent");
-            linkOpts[ID].canceled = true;
-        }
+    function cancelOption(uint ID) public payable {
+        require(msg.sender == maticOpts[ID].writer, "You did not write this option");
+        //Must not have already been canceled or bought
+        require(!maticOpts[ID].canceled && maticOpts[ID].buyer == address(0), "This option cannot be canceled");
+        maticOpts[ID].writer.transfer(maticOpts[ID].amount);
+        maticOpts[ID].canceled = true;
     }
     
     //Purchase a call option, needs desired token, ID of option and payment
-    function buyOption(string memory token, uint ID) public payable {
-        bytes32 tokenHash = keccak256(abi.encodePacked(token));
-        require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
+    function buyOption(uint ID) public payable {
         updatePrices();
-        if (tokenHash == ethHash) {
-            require(!ethOpts[ID].canceled && ethOpts[ID].expiry > block.timestamp, "Option is canceled/expired and cannot be bought");
-            //Transfer premium payment from buyer
-            require(msg.value == ethOpts[ID].premium, "Incorrect amount of ETH sent for premium");
-            //Transfer premium payment to writer
-            ethOpts[ID].writer.transfer(ethOpts[ID].premium);
-            ethOpts[ID].buyer = payable(msg.sender);
-        } else {
-            require(!linkOpts[ID].canceled && linkOpts[ID].expiry > block.timestamp, "Option is canceled/expired and cannot be bought");
-            //Transfer premium payment from buyer to writer
-            require(LINK.transferFrom(msg.sender, linkOpts[ID].writer, linkOpts[ID].premium), "Incorrect amount of LINK sent for premium");
-            linkOpts[ID].buyer = payable(msg.sender);
-        }
+        require(!maticOpts[ID].canceled && maticOpts[ID].expiry > block.timestamp, "Option is canceled/expired and cannot be bought");
+        //Transfer premium payment from buyer
+        require(msg.value == maticOpts[ID].premium, "Incorrect amount of MATIC sent for premium");
+        //Transfer premium payment to writer
+        maticOpts[ID].writer.transfer(maticOpts[ID].premium);
+        maticOpts[ID].buyer = payable(msg.sender);
     }
     
     //Exercise your call option, needs desired token, ID of option and payment
-    function exercise(string memory token, uint ID) public payable {
+    function exercise(uint ID) public payable {
         //If not expired and not already exercised, allow option owner to exercise
         //To exercise, the strike value*amount equivalent paid to writer (from buyer) and amount of tokens in the contract paid to buyer
-        bytes32 tokenHash = keccak256(abi.encodePacked(token));
-        require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
-        if (tokenHash == ethHash) {
-            require(ethOpts[ID].buyer == msg.sender, "You do not own this option");
-            require(!ethOpts[ID].exercised, "Option has already been exercised");
-            require(ethOpts[ID].expiry > block.timestamp, "Option is expired");
-            //Conditions are met, proceed to payouts
-            updatePrices();
-            //Cost to exercise
-            uint exerciseVal = ethOpts[ID].strike*ethOpts[ID].amount;
-            //Equivalent ETH value using Chainlink feed
-            uint equivEth = exerciseVal / (ethPrice * 10**10); //move decimal 10 places right to account for 8 places of pricefeed
-            //Buyer exercises option by paying strike*amount equivalent ETH value
-            require(msg.value == equivEth, "Incorrect LINK amount sent to exercise");
-            //Pay writer the exercise cost
-            ethOpts[ID].writer.transfer(equivEth);
-            //Pay buyer contract amount of ETH
-            payable(msg.sender).transfer(ethOpts[ID].amount);
-            ethOpts[ID].exercised = true;
-            
-        } else {
-            require(linkOpts[ID].buyer == msg.sender, "You do not own this option");
-            require(!linkOpts[ID].exercised, "Option has already been exercised");
-            require(linkOpts[ID].expiry > block.timestamp, "Option is expired");
-            updatePrices();
-            uint exerciseVal = linkOpts[ID].strike*linkOpts[ID].amount;
-            uint equivLink = exerciseVal / (linkPrice * 10**10);
-            //Buyer exercises option, exercise cost paid to writer
-            require(LINK.transferFrom(msg.sender, linkOpts[ID].writer, equivLink), "Incorrect LINK amount sent to exercise");
-            //Pay buyer contract amount of LINK
-            require(LINK.transfer(msg.sender, linkOpts[ID].amount), "Error: buyer was not paid");
-            linkOpts[ID].exercised = true;
-        }
+        require(maticOpts[ID].buyer == msg.sender, "You do not own this option");
+        require(!maticOpts[ID].exercised, "Option has already been exercised");
+        require(maticOpts[ID].expiry > block.timestamp, "Option is expired");
+        //Conditions are met, proceed to payouts
+        updatePrices();
+        //Cost to exercise
+        uint exerciseVal = maticOpts[ID].strike*maticOpts[ID].amount;
+        //Equivalent MATIC value using Chainlink feed
+        uint equivMatic = exerciseVal / (maticPrice * 10**10); //move decimal 10 places right to account for 8 places of pricefeed
+        //Buyer exercises option by paying strike*amount equivalent MATIC value
+        require(msg.value == equivMatic, "Incorrect LINK amount sent to exercise");
+        //Pay writer the exercise cost
+        maticOpts[ID].writer.transfer(equivMatic);
+        //Pay buyer contract amount of MATIC
+        payable(msg.sender).transfer(maticOpts[ID].amount);
+        maticOpts[ID].exercised = true;
     }
     
     //Allows writer to retrieve funds from an expired, non-exercised, non-canceled option
-    function retrieveExpiredFunds(string memory token, uint ID) public payable {
-        bytes32 tokenHash = keccak256(abi.encodePacked(token));
-        require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
-        if (tokenHash == ethHash) {
-            require(msg.sender == ethOpts[ID].writer, "You did not write this option");
-            //Must be expired, not exercised and not canceled
-            require(ethOpts[ID].expiry <= block.timestamp && !ethOpts[ID].exercised && !ethOpts[ID].canceled, "This option is not eligible for withdraw");
-            ethOpts[ID].writer.transfer(ethOpts[ID].amount);
-            //Repurposing canceled flag to prevent more than one withdraw
-            ethOpts[ID].canceled = true;
-        } else {
-            require(msg.sender == linkOpts[ID].writer, "You did not write this option");
-            require(linkOpts[ID].expiry <= block.timestamp && !linkOpts[ID].exercised && !linkOpts[ID].canceled, "This option is not eligible for withdraw");
-            require(LINK.transferFrom(address(this), linkOpts[ID].writer, linkOpts[ID].amount), "Incorrect amount of LINK sent");
-            linkOpts[ID].canceled = true;
-        }
+    function retrieveExpiredFunds(uint ID) public payable {
+        require(msg.sender == maticOpts[ID].writer, "You did not write this option");
+        //Must be expired, not exercised and not canceled
+        require(maticOpts[ID].expiry <= block.timestamp && !maticOpts[ID].exercised && !maticOpts[ID].canceled, "This option is not eligible for withdraw");
+        maticOpts[ID].writer.transfer(maticOpts[ID].amount);
+        //Repurposing canceled flag to prevent more than one withdraw
+        maticOpts[ID].canceled = true;
     }
     
     //This is a helper function to help the user see what the cost to exercise an option is currently before they do so
     //Updates lastestCost member of option which is publicly viewable
-    function updateExerciseCost(string memory token, uint ID) public {
-        bytes32 tokenHash = keccak256(abi.encodePacked(token));
-        require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
+    function updateExerciseCost(uint ID) public {
         updatePrices();
-        if (tokenHash == ethHash) {
-            ethOpts[ID].latestCost = (ethOpts[ID].strike * ethOpts[ID].amount) / (ethPrice * 10**10);
-        } else {
-            linkOpts[ID].latestCost = (linkOpts[ID].strike * linkOpts[ID].amount) / (linkPrice * 10**10);
-        }
+        maticOpts[ID].latestCost = (maticOpts[ID].strike * maticOpts[ID].amount) / (maticPrice * 10**10);
     }
 }
