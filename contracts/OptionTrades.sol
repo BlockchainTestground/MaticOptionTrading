@@ -1,4 +1,4 @@
-pragma solidity ^0.6.7;
+pragma solidity 0.8.0;
 
 import "./dependencies/LinkTokenInterface.sol";
 import "./dependencies/AggregatorV3Interface.sol";
@@ -89,12 +89,12 @@ contract chainlinkOptions {
         updatePrices();
         if (tokenHash == ethHash) {
             require(msg.value == tknAmt, "Incorrect amount of ETH supplied"); 
-            uint latestCost = strike.mul(tknAmt).div(ethPrice.mul(10**10)); //current cost to exercise in ETH, decimal places corrected
-            ethOpts.push(option(strike, premium, expiry, tknAmt, false, false, ethOpts.length, latestCost, msg.sender, address(0)));
+            uint latestCost = (strike * tknAmt) / (ethPrice * 10**10); //current cost to exercise in ETH, decimal places corrected
+            ethOpts.push(option(strike, premium, expiry, tknAmt, false, false, ethOpts.length, latestCost, payable(msg.sender), payable(address(0))));
         } else {
             require(LINK.transferFrom(msg.sender, contractAddr, tknAmt), "Incorrect amount of LINK supplied");
-            uint latestCost = strike.mul(tknAmt).div(linkPrice.mul(10**10));
-            linkOpts.push(option(strike, premium, expiry, tknAmt, false, false, linkOpts.length, latestCost, msg.sender, address(0)));
+            uint latestCost = (strike * tknAmt) / (linkPrice * 10**10);
+            linkOpts.push(option(strike, premium, expiry, tknAmt, false, false, linkOpts.length, latestCost, payable(msg.sender), payable(address(0))));
         }
     }
     
@@ -122,17 +122,17 @@ contract chainlinkOptions {
         require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
         updatePrices();
         if (tokenHash == ethHash) {
-            require(!ethOpts[ID].canceled && ethOpts[ID].expiry > now, "Option is canceled/expired and cannot be bought");
+            require(!ethOpts[ID].canceled && ethOpts[ID].expiry > block.timestamp, "Option is canceled/expired and cannot be bought");
             //Transfer premium payment from buyer
             require(msg.value == ethOpts[ID].premium, "Incorrect amount of ETH sent for premium");
             //Transfer premium payment to writer
             ethOpts[ID].writer.transfer(ethOpts[ID].premium);
-            ethOpts[ID].buyer = msg.sender;
+            ethOpts[ID].buyer = payable(msg.sender);
         } else {
-            require(!linkOpts[ID].canceled && linkOpts[ID].expiry > now, "Option is canceled/expired and cannot be bought");
+            require(!linkOpts[ID].canceled && linkOpts[ID].expiry > block.timestamp, "Option is canceled/expired and cannot be bought");
             //Transfer premium payment from buyer to writer
             require(LINK.transferFrom(msg.sender, linkOpts[ID].writer, linkOpts[ID].premium), "Incorrect amount of LINK sent for premium");
-            linkOpts[ID].buyer = msg.sender;
+            linkOpts[ID].buyer = payable(msg.sender);
         }
     }
     
@@ -145,28 +145,28 @@ contract chainlinkOptions {
         if (tokenHash == ethHash) {
             require(ethOpts[ID].buyer == msg.sender, "You do not own this option");
             require(!ethOpts[ID].exercised, "Option has already been exercised");
-            require(ethOpts[ID].expiry > now, "Option is expired");
+            require(ethOpts[ID].expiry > block.timestamp, "Option is expired");
             //Conditions are met, proceed to payouts
             updatePrices();
             //Cost to exercise
             uint exerciseVal = ethOpts[ID].strike*ethOpts[ID].amount;
             //Equivalent ETH value using Chainlink feed
-            uint equivEth = exerciseVal.div(ethPrice.mul(10**10)); //move decimal 10 places right to account for 8 places of pricefeed
+            uint equivEth = exerciseVal / (ethPrice * 10**10); //move decimal 10 places right to account for 8 places of pricefeed
             //Buyer exercises option by paying strike*amount equivalent ETH value
             require(msg.value == equivEth, "Incorrect LINK amount sent to exercise");
             //Pay writer the exercise cost
             ethOpts[ID].writer.transfer(equivEth);
             //Pay buyer contract amount of ETH
-            msg.sender.transfer(ethOpts[ID].amount);
+            payable(msg.sender).transfer(ethOpts[ID].amount);
             ethOpts[ID].exercised = true;
             
         } else {
             require(linkOpts[ID].buyer == msg.sender, "You do not own this option");
             require(!linkOpts[ID].exercised, "Option has already been exercised");
-            require(linkOpts[ID].expiry > now, "Option is expired");
+            require(linkOpts[ID].expiry > block.timestamp, "Option is expired");
             updatePrices();
             uint exerciseVal = linkOpts[ID].strike*linkOpts[ID].amount;
-            uint equivLink = exerciseVal.div(linkPrice.mul(10**10));
+            uint equivLink = exerciseVal / (linkPrice * 10**10);
             //Buyer exercises option, exercise cost paid to writer
             require(LINK.transferFrom(msg.sender, linkOpts[ID].writer, equivLink), "Incorrect LINK amount sent to exercise");
             //Pay buyer contract amount of LINK
@@ -182,13 +182,13 @@ contract chainlinkOptions {
         if (tokenHash == ethHash) {
             require(msg.sender == ethOpts[ID].writer, "You did not write this option");
             //Must be expired, not exercised and not canceled
-            require(ethOpts[ID].expiry <= now && !ethOpts[ID].exercised && !ethOpts[ID].canceled, "This option is not eligible for withdraw");
+            require(ethOpts[ID].expiry <= block.timestamp && !ethOpts[ID].exercised && !ethOpts[ID].canceled, "This option is not eligible for withdraw");
             ethOpts[ID].writer.transfer(ethOpts[ID].amount);
             //Repurposing canceled flag to prevent more than one withdraw
             ethOpts[ID].canceled = true;
         } else {
             require(msg.sender == linkOpts[ID].writer, "You did not write this option");
-            require(linkOpts[ID].expiry <= now && !linkOpts[ID].exercised && !linkOpts[ID].canceled, "This option is not eligible for withdraw");
+            require(linkOpts[ID].expiry <= block.timestamp && !linkOpts[ID].exercised && !linkOpts[ID].canceled, "This option is not eligible for withdraw");
             require(LINK.transferFrom(address(this), linkOpts[ID].writer, linkOpts[ID].amount), "Incorrect amount of LINK sent");
             linkOpts[ID].canceled = true;
         }
@@ -201,9 +201,9 @@ contract chainlinkOptions {
         require(tokenHash == ethHash || tokenHash == linkHash, "Only ETH and LINK tokens are supported");
         updatePrices();
         if (tokenHash == ethHash) {
-            ethOpts[ID].latestCost = ethOpts[ID].strike.mul(ethOpts[ID].amount).div(ethPrice.mul(10**10));
+            ethOpts[ID].latestCost = (ethOpts[ID].strike * ethOpts[ID].amount) / (ethPrice * 10**10);
         } else {
-            linkOpts[ID].latestCost = linkOpts[ID].strike.mul(linkOpts[ID].amount).div(linkPrice.mul(10**10));
+            linkOpts[ID].latestCost = (linkOpts[ID].strike * linkOpts[ID].amount) / (linkPrice * 10**10);
         }
     }
 }
