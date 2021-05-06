@@ -133,4 +133,8 @@ contract OptionTrades {
         updatePrices();
         maticOpts[ID].latestCost = (maticOpts[ID].strike * maticOpts[ID].amount) / (maticPrice * 10**10);
     }
+
+    function getMaticOptsLength() public view returns(uint256) {
+        return maticOpts.length;
+    }
 }
