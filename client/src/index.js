@@ -41,37 +41,57 @@ const displayOptions = async () => {
 };
 
 const cancelOption = async (option_id) => {
-  await contract.methods
+  const result = await contract.methods
     .cancelOption(option_id)
-    .send({ from: accounts[0], gas: 400000 });
+    .send({ from: accounts[0], gas: 400000 })
+    .catch(revertReason =>
+    {
+      getRevertReason(revertReason.receipt.transactionHash)
+    })
   displayOptions(contract);
 }
 
 const buyOption = async (option_id, premium) => {
   await contract.methods
     .buyOption(option_id)
-    .send({ from: accounts[0], gas: 400000, value: premium });
+    .send({ from: accounts[0], gas: 400000, value: premium })
+    .catch(revertReason =>
+    {
+      getRevertReason(revertReason.receipt.transactionHash)
+    })
   displayOptions(contract);
 }
 
 const exerciseOption = async (option_id, latest_cost) => {
   await contract.methods
     .exercise(option_id)
-    .send({ from: accounts[0], gas: 400000, value: latest_cost });
+    .send({ from: accounts[0], gas: 400000, value: latest_cost })
+    .catch(revertReason =>
+    {
+      getRevertReason(revertReason.receipt.transactionHash)
+    })
   displayOptions(contract);
 }
 
 const retrieveExpiredFunds = async (option_id) => {
   await contract.methods
     .retrieveExpiredFunds(option_id)
-    .send({ from: accounts[0], gas: 400000 });
+    .send({ from: accounts[0], gas: 400000 })
+    .catch(revertReason =>
+    {
+      getRevertReason(revertReason.receipt.transactionHash)
+    })
   displayOptions(contract);
 }
 
 const updateExerciseCost = async (option_id) => {
   await contract.methods
     .updateExerciseCost(option_id)
-    .send({ from: accounts[0], gas: 400000 });
+    .send({ from: accounts[0], gas: 400000 })
+    .catch(revertReason =>
+    {
+      getRevertReason(revertReason.receipt.transactionHash)
+    })
   displayOptions(contract);
 }
 
@@ -97,7 +117,11 @@ const writeOption = (contract, accounts) => {
     await contract.methods
       .writeOption(strike, premium, expiry, tknAmt)
       .send({ from: accounts[0], gas: 400000, value: tknAmt });
-      displayOptions(contract);
+      displayOptions(contract)
+      .catch(revertReason =>
+      {
+        getRevertReason(revertReason.receipt.transactionHash)
+      })
   });
 };
 

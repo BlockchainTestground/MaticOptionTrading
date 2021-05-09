@@ -17,6 +17,26 @@ const getWeb3 = () => {
   });
 };
 
+function handleRevertError(message)
+{
+  alert(message)
+}
+
+async function getRevertReason(txHash)
+{
+  const tx = await web3.eth.getTransaction(txHash)
+  await web3.eth.call(tx, tx.blockNumber)
+    .then(result => { throw Error('unlikely to happen') })
+    .catch(
+      revertReason =>
+      {
+        var str = ""+revertReason;
+        json_reason = JSON.parse(str.substring(str.indexOf("{")));
+        handleRevertError(json_reason.message)
+      }
+    )
+}
+
 const getContract = async (web3) => {
   const data = await $.getJSON("./contracts/OptionTrades.json");
 
