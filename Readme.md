@@ -29,3 +29,19 @@ Create a new migration on the `./migrations/` directory following the same seque
 truffle migrate --network mumbai
 truffle migrate --network matic
 ```
+
+
+Option trading platform for matic frontend. The smart contract backbone is located in this [this repo](https://github.com/Turupawn/OptionTradingFrontend).
+
+# Client
+
+Now run the client.
+
+```bash
+cd client
+lite-server
+```
+
+The server should be running now on port 3000.
+
+The smart contract ABI is located at `/client/contracts/OptionTrades.json`.
