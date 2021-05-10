@@ -10,7 +10,7 @@ const displayOptions = async () => {
     option = await contract.methods.maticOpts(i).call()
     options_html += "<li>"
     options_html += "Amount: "
-    options_html += option.amount
+    options_html += convertWeiToCrypto(option.amount);
     options_html += " Buyer: "
     options_html += option.buyer
     options_html += " Writer "

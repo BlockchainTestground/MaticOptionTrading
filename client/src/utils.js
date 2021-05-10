@@ -53,3 +53,9 @@ const convertToDateString = (epochTime) => {
   const date = new Date(epochTime*1000);
   return date.toLocaleDateString("en-US");
 };
+
+const convertWeiToCrypto = (wei) => {
+  const web3 = new Web3(window.ethereum);
+  const cryptoValue = web3.utils.fromWei(wei)
+  return cryptoValue;
+}
