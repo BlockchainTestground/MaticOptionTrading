@@ -48,3 +48,8 @@ const getContract = async (web3) => {
   );
   return contract;
 };
+
+const convertToDateString = (epochTime) => {
+  const date = new Date(epochTime*1000);
+  return date.toLocaleDateString("en-US");
+};

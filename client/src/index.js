@@ -20,7 +20,7 @@ const displayOptions = async () => {
     options_html += " Exercised: "
     options_html += option.exercised
     options_html += " Expiry: "
-    options_html += option.expiry
+    options_html += convertToDateString(option.expiry);
     options_html += " Id: "
     options_html += option.id
     options_html += " Latest_cost: "
