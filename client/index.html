@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Option Trading Dapp</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>parménides.finance</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
 </head>
 <body>
-    <h1>Option Trading Dapp</h1>
-    <br/>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">
+        Hello World
+      </h1>
 
-    <h2>Explore Options</h2>
-    <div id="others_options"></div>
-    <h2>Options you bought</h2>
-    <div id="options_I_bought"></div>
-    <h2>Options you wrote</h2>
-    <div id="my_options"></div>
-    
-    <h2>Write option</h2>
-    <form id="write_option_form">
+      <h2 class="title">Explore Options</h2>
+      <div id="others_options"></div>
+      <h2 class="title">Options you bought</h2>
+      <div id="options_I_bought"></div>
+      <h2 class="title">Options you wrote</h2>
+      <div id="my_options"></div>
+      
+      <h2>Write option</h2>
+      <form id="write_option_form">
         <span>Strike</span>
         <input id="strike" type="text"/>
         <span>Premium</span>
@@ -27,11 +31,12 @@
         <span>Amount</span>
         <input id="tknAmt" type="text"/>
         <input type="submit" value="submit"/>
-    </form>
-
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
-    <script type="text/javascript" src="src/utils.js"></script>
-    <script type="text/javascript" src ="src/index.js"></script>
+      </form>
+    </div>
+  </section>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
+  <script type="text/javascript" src="src/utils.js"></script>
+  <script type="text/javascript" src ="src/index.js"></script>
 </body>
 </html>

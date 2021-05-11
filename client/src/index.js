@@ -6,7 +6,7 @@ var web3;
 function getOptionHtml(option)
 {
   result = ""
-  result += "<li>"
+  result += "<tr><td>"
   result += "Amount: "
   result += convertWeiToCrypto(option.amount);
   result += " Buyer: "
@@ -32,12 +32,12 @@ function getOptionHtml(option)
   result += "<button onclick='exerciseOption("+ option.id +", "+ option.latestCost +")'>Exercise</button>"
   result += `<button onclick='retrieveExpiredFunds("+ option.id +")' style='display:${showRetrieveExpiredFunds(option, accounts)}'>Retrieve expired funds </button>`
   result += "<button onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
-  result + "</li>"
+  result + "</tr></td>"
   return result
 }
 
 const displayMyOptions = async (options_length) => {
-  var options_html = "<ul>"
+  var options_html = "<table class='table'>"
   for(var i=0; i<options_length; i++)
   {
     option = await contract.methods.maticOpts(i).call()
@@ -47,12 +47,12 @@ const displayMyOptions = async (options_length) => {
     }
 
   }
-  options_html += "</ul>"
+  options_html += "</table>"
   $("#my_options").html(options_html);
 }
 
 const displayOthersOptions = async (options_length) => {
-  var options_html = "<ul>"
+  var options_html = "<table>"
   for(var i=0; i<options_length; i++)
   {
     option = await contract.methods.maticOpts(i).call()
@@ -61,12 +61,12 @@ const displayOthersOptions = async (options_length) => {
       options_html += getOptionHtml(option)
     }
   }
-  options_html += "</ul>"
+  options_html += "</table>"
   $("#others_options").html(options_html);
 }
 
 const displayOptionsIBought = async (options_length) => {
-  var options_html = "<ul>"
+  var options_html = "<table>"
   for(var i=0; i<options_length; i++)
   {
     option = await contract.methods.maticOpts(i).call()
@@ -75,7 +75,7 @@ const displayOptionsIBought = async (options_length) => {
       options_html += getOptionHtml(option)
     }
   }
-  options_html += "</ul>"
+  options_html += "</table>"
   $("#options_I_bought").html(options_html);
 }
 
