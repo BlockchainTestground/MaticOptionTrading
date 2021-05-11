@@ -59,3 +59,7 @@ const convertWeiToCrypto = (wei) => {
   const cryptoValue = web3.utils.fromWei(wei)
   return cryptoValue;
 }
+
+const showRetrieveExpiredFunds = (option, accounts) => {
+  return option.writer === accounts[0] && !option.exercised && !option.canceled  ? "": "none"
+}

@@ -30,7 +30,7 @@ function getOptionHtml(option)
   result += "<button onclick='cancelOption("+ option.id +")'>Cancel</button>"
   result += "<button onclick='buyOption("+ option.id +", "+ option.premium +")'>Buy</button>"
   result += "<button onclick='exerciseOption("+ option.id +", "+ option.latestCost +")'>Exercise</button>"
-  result += "<button onclick='retrieveExpiredFunds("+ option.id +")'>Retrieve expired funds</button>"
+  result += `<button onclick='retrieveExpiredFunds("+ option.id +")' style='display:${showRetrieveExpiredFunds(option, accounts)}'>Retrieve expired funds </button>`
   result += "<button onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
   result + "</li>"
   return result
@@ -45,6 +45,7 @@ const displayMyOptions = async (options_length) => {
     {
       options_html += getOptionHtml(option)
     }
+
   }
   options_html += "</ul>"
   $("#my_options").html(options_html);
@@ -171,6 +172,7 @@ const writeOption = (contract, accounts) => {
 };
 
 async function optionTradesApp() {
+  console.log('tigrenorteno')
   var awaitWeb3 = async function() {
     web3 = await getWeb3();
     var awaitContract = async function() {
