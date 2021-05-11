@@ -46,4 +46,3 @@ The server should be running now on port 3000.
 
 The smart contract ABI is located at `/client/contracts/OptionTrades.json`.
 
-x
