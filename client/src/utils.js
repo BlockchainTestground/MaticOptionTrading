@@ -59,8 +59,6 @@ const convertWeiToCrypto = (wei) => {
 };
 
 const showRetrieveExpiredFunds = (option, accounts) => {
-  console.log("option.expiry", option.expiry);
-  console.log("now", Date.now());
   return option.writer === accounts[0] &&
     !option.exercised &&
     !option.canceled &&
@@ -68,3 +66,7 @@ const showRetrieveExpiredFunds = (option, accounts) => {
     ? ""
     : "none";
 };
+
+const showExcercise = () =>{
+
+}
