@@ -2,43 +2,88 @@ var contract;
 var accounts;
 var web3;
 
-const displayOptions = async () => {
-  options_length = await contract.methods.getMaticOptsLength().call()
-  options_html = "<ul>"
-  for(i=0; i<options_length; i++)
+
+function getOptionHtml(option)
+{
+  result = ""
+  result += "<li>"
+  result += "Amount: "
+  result += convertWeiToCrypto(option.amount);
+  result += " Buyer: "
+  result += option.buyer
+  result += " Writer "
+  result += option.writer
+  result += " Canceled: "
+  result += option.canceled
+  result += " Exercised: "
+  result += option.exercised
+  result += " Expiry: "
+  result += convertToDateString(option.expiry);
+  result += " Id: "
+  result += option.id
+  result += " Latest_cost: "
+  result += option.latestCost
+  result += " Premium: "
+  result += option.premium
+  result += " Strike: "
+  result += option.strike
+  result += "<button onclick='cancelOption("+ option.id +")'>Cancel</button>"
+  result += "<button onclick='buyOption("+ option.id +", "+ option.premium +")'>Buy</button>"
+  result += "<button onclick='exerciseOption("+ option.id +", "+ option.latestCost +")'>Exercise</button>"
+  result += "<button onclick='retrieveExpiredFunds("+ option.id +")'>Retrieve expired funds</button>"
+  result += "<button onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
+  result + "</li>"
+  return result
+}
+
+const displayMyOptions = async (options_length) => {
+  var options_html = "<ul>"
+  for(var i=0; i<options_length; i++)
   {
     option = await contract.methods.maticOpts(i).call()
-    options_html += "<li>"
-    options_html += "Amount: "
-    options_html += convertWeiToCrypto(option.amount);
-    options_html += " Buyer: "
-    options_html += option.buyer
-    options_html += " Writer "
-    options_html += option.writer
-    options_html += " Canceled: "
-    options_html += option.canceled
-    options_html += " Exercised: "
-    options_html += option.exercised
-    options_html += " Expiry: "
-    options_html += convertToDateString(option.expiry);
-    options_html += " Id: "
-    options_html += option.id
-    options_html += " Latest_cost: "
-    options_html += option.latestCost
-    options_html += " Premium: "
-    options_html += option.premium
-    options_html += " Strike: "
-    options_html += option.strike
-    options_html += "<button onclick='cancelOption("+ option.id +")'>Cancel</button>"
-    options_html += "<button onclick='buyOption("+ option.id +", "+ option.premium +")'>Buy</button>"
-    options_html += "<button onclick='exerciseOption("+ option.id +", "+ option.latestCost +")'>Exercise</button>"
-    options_html += "<button onclick='retrieveExpiredFunds("+ option.id +")'>Retrieve expired funds</button>"
-    options_html += "<button onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
-    options_html += "</li>"
+    if(option.writer == accounts[0])
+    {
+      options_html += getOptionHtml(option)
+    }
   }
   options_html += "</ul>"
-  $("#options").html(options_html);
-};
+  $("#my_options").html(options_html);
+}
+
+const displayOthersOptions = async (options_length) => {
+  var options_html = "<ul>"
+  for(var i=0; i<options_length; i++)
+  {
+    option = await contract.methods.maticOpts(i).call()
+    if(option.writer != accounts[0] && option.buyer != accounts[0])
+    {
+      options_html += getOptionHtml(option)
+    }
+  }
+  options_html += "</ul>"
+  $("#others_options").html(options_html);
+}
+
+const displayOptionsIBought = async (options_length) => {
+  var options_html = "<ul>"
+  for(var i=0; i<options_length; i++)
+  {
+    option = await contract.methods.maticOpts(i).call()
+    if(option.buyer == accounts[0])
+    {
+      options_html += getOptionHtml(option)
+    }
+  }
+  options_html += "</ul>"
+  $("#options_I_bought").html(options_html);
+}
+
+const displayOptions = async () => {
+  options_length = await contract.methods.getMaticOptsLength().call()
+  displayMyOptions(options_length)
+  displayOthersOptions(options_length)
+  displayOptionsIBought(options_length)
+}
 
 const cancelOption = async (option_id) => {
   const result = await contract.methods
