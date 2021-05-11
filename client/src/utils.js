@@ -62,11 +62,15 @@ const showRetrieveExpiredFunds = (option, accounts) => {
   return option.writer === accounts[0] &&
     !option.exercised &&
     !option.canceled &&
-    option.expiry > Date.now()
+    option.expiry < Date.now()
     ? ""
     : "none";
 };
 
-const showExcercise = () =>{
-
+const showExcercise = (option, accounts) =>{
+  return option.buyer === accounts[0] &&
+  !option.exercised &&
+  option.expiry < Date.now()
+  ? ""
+  : "none";
 }
