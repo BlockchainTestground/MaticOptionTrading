@@ -17,24 +17,22 @@ const getWeb3 = () => {
   });
 };
 
-function handleRevertError(message)
-{
-  alert(message)
+function handleRevertError(message) {
+  alert(message);
 }
 
-async function getRevertReason(txHash)
-{
-  const tx = await web3.eth.getTransaction(txHash)
-  await web3.eth.call(tx, tx.blockNumber)
-    .then(result => { throw Error('unlikely to happen') })
-    .catch(
-      revertReason =>
-      {
-        var str = ""+revertReason;
-        json_reason = JSON.parse(str.substring(str.indexOf("{")));
-        handleRevertError(json_reason.message)
-      }
-    )
+async function getRevertReason(txHash) {
+  const tx = await web3.eth.getTransaction(txHash);
+  await web3.eth
+    .call(tx, tx.blockNumber)
+    .then((result) => {
+      throw Error("unlikely to happen");
+    })
+    .catch((revertReason) => {
+      var str = "" + revertReason;
+      json_reason = JSON.parse(str.substring(str.indexOf("{")));
+      handleRevertError(json_reason.message);
+    });
 }
 
 const getContract = async (web3) => {
@@ -50,16 +48,29 @@ const getContract = async (web3) => {
 };
 
 const convertToDateString = (epochTime) => {
-  const date = new Date(epochTime*1000);
+  const date = new Date(epochTime * 1000);
   return date.toLocaleDateString("en-US");
 };
 
 const convertWeiToCrypto = (wei) => {
   const web3 = new Web3(window.ethereum);
-  const cryptoValue = web3.utils.fromWei(wei)
+  const cryptoValue = web3.utils.fromWei(wei);
   return cryptoValue;
-}
+};
 
 const showRetrieveExpiredFunds = (option, accounts) => {
-  return option.writer === accounts[0] && !option.exercised && !option.canceled  ? "": "none"
+  return option.writer === accounts[0] &&
+    !option.exercised &&
+    !option.canceled &&
+    option.expiry < Date.now()
+    ? ""
+    : "none";
+};
+
+const showExcercise = (option, accounts) =>{
+  return option.buyer === accounts[0] &&
+  !option.exercised &&
+  option.expiry < Date.now()
+  ? ""
+  : "none";
 }
