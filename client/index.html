@@ -13,39 +13,68 @@
         parménides.finance
       </h1>
 
-      <h2 class="title">Explore Options</h2>
-      <div id="others_options"></div>
-      <h2 class="title">Options you bought</h2>
-      <div id="options_I_bought"></div>
-      <h2 class="title">Options you wrote</h2>
-      <div id="my_options"></div>
-
-      <div class="columns is-mobile">
-        <div class="column is-three-fifths is-offset-one-fifth">
-          <h2 class="title">Write option</h2>
-          <form id="write_option_form">
-            <div class="field">
-              <label class="label">Strike</label>
-              <div class="control">
-                <input id="strike" class="input" type="text" placeholder="Text input">
-              </div>
+      <form id="write_option_form">
+        <div class="columns">
+          <div class="column">
+            <div class="control">
+              <label class="radio">
+                <input id="put" type="radio" name="answer" checked>
+                PUT
+              </label>
+              <label id="call" class="radio">
+                <input type="radio" name="answer">
+                CALL
+              </label>
             </div>
+          </div>
+          <div class="column">
             <div class="field">
-              <label class="label">Premium</label>
+              <label class="label">Amount (in Matic)</label>
               <div class="control">
-                <input id="premium" class="input" type="text" placeholder="Text input">
+                <input id="tknAmt" class="input" type="text" placeholder="">
               </div>
             </div>
             <div class="field">
               <label class="label">Expiry</label>
-              <div class="control">
-                <input id="expiry" class="input" type="text" placeholder="Text input">
+              <div class="select">
+                <select id="expiry">
+                  <option value="1">1 day</option>
+                  <option value="2">2 days</option>
+                  <option value="3">3 days</option>
+                  <option value="7">7 days</option>
+                  <option value="10">10 days</option>
+                  <option value="15">15 days</option>
+                  <option value="20">20 days</option>
+                  <option value="30">30 days</option>
+                </select>
               </div>
             </div>
+            <div class="card">
+              <div class="card-content">
+                <div class="content">
+                  <h5 class="subtitle is-5">Summary</h5>
+                  <p id="summary_strike">Strike Price:</p>
+                  <p id="summary_premium">Premium:</p>
+                  <p id="summary_usd_value">USD Value:</p>
+                  <p id="summary_break_even">Break Even:</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
             <div class="field">
-              <label class="label">Amount</label>
+              <label class="label">Strike</label>
+              <p class="control has-icons-left has-icons-right">
+                <input id="strike" class="input" type="text" placeholder="">
+                <span class="icon is-small is-left">
+                  $
+                </span>
+              </p>
+            </div>
+            <div class="field">
+              <label class="label">Premium (in Matic)</label>
               <div class="control">
-                <input id="tknAmt" class="input" type="text" placeholder="Text input">
+                <input id="premium" class="input" type="text" placeholder="">
               </div>
             </div>
             <div class="field">
@@ -55,9 +84,19 @@
                 </button>
               </p>
             </div>
-          </form>
+          </div>
+          <div class="column">
+            <!--Fourth column-->
+          </div>
         </div>
-      </div>
+      </form>
+
+      <h2 class="title">Explore Options</h2>
+      <div id="others_options"></div>
+      <h2 class="title">Options you bought</h2>
+      <div id="options_I_bought"></div>
+      <h2 class="title">Options you wrote</h2>
+      <div id="my_options"></div>
     </div>
   </section>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -8,6 +8,15 @@ function getOptionHtml(option)
   result = ""
   result += "<tr>"
   result += "<td>"
+  if(option.optionType == 0)
+  {
+    result += "PUT";
+  }else
+  {
+    result += "CALL";
+  }
+  result += "</td>"
+  result += "<td>"
   result += convertWeiToCrypto(option.amount);
   result += "</td>"
   result += "<td>"
@@ -50,14 +59,15 @@ function getOptionHtml(option)
 
 const displayMyOptions = async (options_length) => {
   var options_html = "<table class='table'>"
-    + "<thead><tr><th>Amount</th>"
+    + "<thead><tr><th>Type</th>"
+    + "<th>Amount</th>"
     + "<th>Buyer</th>"
     + "<th>Writer</th>"
     + "<th>Canceled</th>"
     + "<th>Exercised</th>"
     + "<th>Expiry</th>"
     + "<th>Id</th>"
-    + "<th>Latest_cost</th>"
+    + "<th>Latest cost</th>"
     + "<th>Premium</th>"
     + "<th>Strike</th>"
     + "<th>Actions</th>"
@@ -85,7 +95,7 @@ const displayOthersOptions = async (options_length) => {
     + "<th>Exercised</th>"
     + "<th>Expiry</th>"
     + "<th>Id</th>"
-    + "<th>Latest_cost</th>"
+    + "<th>Latest cost</th>"
     + "<th>Premium</th>"
     + "<th>Strike</th>"
     + "<th>Actions</th>"
@@ -112,7 +122,7 @@ const displayOptionsIBought = async (options_length) => {
     + "<th>Exercised</th>"
     + "<th>Expiry</th>"
     + "<th>Id</th>"
-    + "<th>Latest_cost</th>"
+    + "<th>Latest cost</th>"
     + "<th>Premium</th>"
     + "<th>Strike</th>"
     + "<th>Actions</th>"
@@ -192,27 +202,50 @@ const updateExerciseCost = async (option_id) => {
   displayOptions(contract);
 }
 
+let strike = document.getElementById("strike").value;
+let premium = document.getElementById("premium").value;
+let expiry_days = document.getElementById("expiry").value;
+let tknAmt = document.getElementById("tknAmt").value;
+let optionType = "CALL";
+
+function updateSummary() {
+  document.getElementById("summary_strike").innerHTML = "Strike price: " + strike
+  document.getElementById("summary_premium").innerHTML = "Premium: " + premium
+  document.getElementById("summary_usd_value").innerHTML = "USD Value:: ??"
+  document.getElementById("summary_break_even").innerHTML = "Break Even: ??"
+}
+
 const writeOption = (contract, accounts) => {
-  let strike;
-  let premium;
-  let expiry;
-  let tknAmt;
   $("#strike").on("change", (e) => {
     strike = e.target.value;
+    updateSummary()
   });
   $("#premium").on("change", (e) => {
     premium = e.target.value;
+    updateSummary()
   });
   $("#expiry").on("change", (e) => {
-    expiry = e.target.value;
+    expiry_days = e.target.value;
+    updateSummary()
   });
   $("#tknAmt").on("change", (e) => {
     tknAmt = e.target.value;
+    updateSummary()
+  });
+  $("#put").on("change", (e) => {
+    optionType = "PUT"
+    updateSummary()
+  });
+  $("#call").on("change", (e) => {
+    optionType = "CALL"
+    updateSummary()
   });
   $("#write_option_form").on("submit", async (e) => {
     e.preventDefault();
+    var secondsSinceEpoch = Math.round(Date.now() / 1000)
+    var expiry = secondsSinceEpoch+expiry_days*86400
     await contract.methods
-      .writeOption(strike, premium, expiry, tknAmt)
+      .writeOption(strike, premium, expiry, tknAmt, optionType)
       .send({ from: accounts[0], gas: 400000, value: tknAmt });
       displayOptions(contract)
       .catch(revertReason =>
