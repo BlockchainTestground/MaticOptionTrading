@@ -10,9 +10,15 @@ contract OptionTrades {
     LinkTokenInterface internal LINK;
     uint maticPrice;
     address payable contractAddr;
+
+    bytes32 callHash = keccak256(abi.encodePacked("CALL"));
+    bytes32 putHash = keccak256(abi.encodePacked("PUT"));
+
+    enum OptionType { PUT, CALL }
     
     //Options stored in arrays of structs
     struct option {
+        OptionType optionType; //Helper to show last updated cost to exercise
         uint strike; //Price in USD (18 decimal places) option allows buyer to purchase tokens at
         uint premium; //Fee in contract token that option writer charges
         uint expiry; //Unix timestamp of expiration time
@@ -68,11 +74,21 @@ contract OptionTrades {
     
     //Allows user to write a covered call option
     //Takes which token, a strike price(USD per token w/18 decimal places), premium(same unit as token), expiration time(unix) and how many tokens the contract is for
-    function writeOption(uint strike, uint premium, uint expiry, uint tknAmt) public payable {
-        updatePrices();
+    function writeOption(uint strike, uint premium, uint expiry, uint tknAmt, string memory optionType) public payable {
+        bytes32 optionType = keccak256(abi.encodePacked(optionType));
+        require(optionType == callHash || optionType == putHash, "Only CALL and PUT option types are supported");
         require(msg.value == tknAmt, "Incorrect amount of Matic supplied"); 
+        updatePrices();
+        OptionType optionTypeEnum;
+        if(optionType == callHash)
+        {
+            optionTypeEnum = OptionType.CALL;
+        }else
+        {
+            optionTypeEnum = OptionType.PUT;
+        }
         uint latestCost = (strike * tknAmt) / (maticPrice * 10**10); //current cost to exercise in Matic, decimal places corrected
-        maticOpts.push(option(strike, premium, expiry, tknAmt, false, false, maticOpts.length, latestCost, payable(msg.sender), payable(address(0))));
+        maticOpts.push(option(optionTypeEnum, strike, premium, expiry, tknAmt, false, false, maticOpts.length, latestCost, payable(msg.sender), payable(address(0))));
     }
     
     //Allows option writer to cancel and get their funds back from an unpurchased option
@@ -110,10 +126,19 @@ contract OptionTrades {
         uint equivMatic = exerciseVal / (maticPrice * 10**10); //move decimal 10 places right to account for 8 places of pricefeed
         //Buyer exercises option by paying strike*amount equivalent MATIC value
         require(msg.value == equivMatic, "Incorrect LINK amount sent to exercise");
-        //Pay writer the exercise cost
-        maticOpts[ID].writer.transfer(equivMatic);
-        //Pay buyer contract amount of MATIC
-        payable(msg.sender).transfer(maticOpts[ID].amount);
+        if(maticOpts[ID].optionType == OptionType.CALL)
+        {
+            //Pay writer the exercise cost
+            maticOpts[ID].writer.transfer(equivMatic);
+            //Pay buyer contract amount of MATIC
+            payable(msg.sender).transfer(maticOpts[ID].amount);
+        }else
+        {
+            //Pay writer contract amount of MATIC
+            payable(msg.sender).transfer(maticOpts[ID].amount);
+            //Pay buyer the exercise cost
+            maticOpts[ID].writer.transfer(equivMatic);
+        }
         maticOpts[ID].exercised = true;
     }
     
