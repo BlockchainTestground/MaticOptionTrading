@@ -6,38 +6,63 @@ var web3;
 function getOptionHtml(option)
 {
   result = ""
-  result += "<li>"
-  result += "Amount: "
+  result += "<tr>"
+  result += "<td>"
   result += convertWeiToCrypto(option.amount);
-  result += " Buyer: "
-  result += option.buyer
-  result += " Writer "
-  result += option.writer
-  result += " Canceled: "
+  result += "</td>"
+  result += "<td>"
+  result += option.buyer.substring(0, 7)
+  result += "</td>"
+  result += "<td>"
+  result += option.writer.substring(0, 7)
+  result += "</td>"
+  result += "<td>"
   result += option.canceled
-  result += " Exercised: "
+  result += "</td>"
+  result += "<td>"
   result += option.exercised
-  result += " Expiry: "
+  result += "</td>"
+  result += "<td>"
   result += convertToDateString(option.expiry);
-  result += " Id: "
+  result += "</td>"
+  result += "<td>"
   result += option.id
-  result += " Latest_cost: "
+  result += "</td>"
+  result += "<td>"
   result += option.latestCost
-  result += " Premium: "
+  result += "</td>"
+  result += "<td>"
   result += option.premium
-  result += " Strike: "
+  result += "</td>"
+  result += "<td>"
   result += option.strike
+  result += "</td>"
+  result += "<td>"
   result += "<button onclick='cancelOption("+ option.id +")'>Cancel</button>"
   result += `<button onclick='buyOption("+ option.id +", "+ option.premium +")' style='display:${showBuy(option)}'>Buy</button>`
   result += `<button onclick='exerciseOption("+ option.id +", "+ option.latestCost +")' style='display:${showExcercise(option, accounts)}'>Exercise</button>`
   result += `<button onclick='retrieveExpiredFunds("+ option.id +")' style='display:${showRetrieveExpiredFunds(option, accounts)}'>Retrieve expired funds </button>`
   result += "<button onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
-  result + "</li>"
+  result += "</td>"
+  result + "</tr></td>"
   return result
 }
 
 const displayMyOptions = async (options_length) => {
-  var options_html = "<ul>"
+  var options_html = "<table class='table'>"
+    + "<thead><tr><th>Amount</th>"
+    + "<th>Buyer</th>"
+    + "<th>Writer</th>"
+    + "<th>Canceled</th>"
+    + "<th>Exercised</th>"
+    + "<th>Expiry</th>"
+    + "<th>Id</th>"
+    + "<th>Latest_cost</th>"
+    + "<th>Premium</th>"
+    + "<th>Strike</th>"
+    + "<th>Actions</th>"
+    + "</thead>"
+
   for(var i=0; i<options_length; i++)
   {
     option = await contract.methods.maticOpts(i).call()
@@ -47,12 +72,25 @@ const displayMyOptions = async (options_length) => {
     }
 
   }
-  options_html += "</ul>"
+  options_html += "</table>"
   $("#my_options").html(options_html);
 }
 
 const displayOthersOptions = async (options_length) => {
-  var options_html = "<ul>"
+  var options_html = "<table class='table'>"
+    + "<thead><tr><th>Amount</th>"
+    + "<th>Buyer</th>"
+    + "<th>Writer</th>"
+    + "<th>Canceled</th>"
+    + "<th>Exercised</th>"
+    + "<th>Expiry</th>"
+    + "<th>Id</th>"
+    + "<th>Latest_cost</th>"
+    + "<th>Premium</th>"
+    + "<th>Strike</th>"
+    + "<th>Actions</th>"
+    + "</thead>"
+
   for(var i=0; i<options_length; i++)
   {
     option = await contract.methods.maticOpts(i).call()
@@ -61,12 +99,25 @@ const displayOthersOptions = async (options_length) => {
       options_html += getOptionHtml(option)
     }
   }
-  options_html += "</ul>"
+  options_html += "</table>"
   $("#others_options").html(options_html);
 }
 
 const displayOptionsIBought = async (options_length) => {
-  var options_html = "<ul>"
+  var options_html = "<table class='table'>"
+    + "<thead><tr><th>Amount</th>"
+    + "<th>Buyer</th>"
+    + "<th>Writer</th>"
+    + "<th>Canceled</th>"
+    + "<th>Exercised</th>"
+    + "<th>Expiry</th>"
+    + "<th>Id</th>"
+    + "<th>Latest_cost</th>"
+    + "<th>Premium</th>"
+    + "<th>Strike</th>"
+    + "<th>Actions</th>"
+    + "</thead>"
+
   for(var i=0; i<options_length; i++)
   {
     option = await contract.methods.maticOpts(i).call()
@@ -75,7 +126,7 @@ const displayOptionsIBought = async (options_length) => {
       options_html += getOptionHtml(option)
     }
   }
-  options_html += "</ul>"
+  options_html += "</table>"
   $("#options_I_bought").html(options_html);
 }
 
