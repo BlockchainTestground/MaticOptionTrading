@@ -19,19 +19,45 @@
       <div id="options_I_bought"></div>
       <h2 class="title">Options you wrote</h2>
       <div id="my_options"></div>
-      
-      <h2>Write option</h2>
-      <form id="write_option_form">
-        <span>Strike</span>
-        <input id="strike" type="text"/>
-        <span>Premium</span>
-        <input id="premium" type="text"/>
-        <span>Expiry</span>
-        <input id="expiry" type="text"/>
-        <span>Amount</span>
-        <input id="tknAmt" type="text"/>
-        <input type="submit" value="submit"/>
-      </form>
+
+      <div class="columns is-mobile">
+        <div class="column is-three-fifths is-offset-one-fifth">
+          <h2 class="title">Write option</h2>
+          <form id="write_option_form">
+            <div class="field">
+              <label class="label">Strike</label>
+              <div class="control">
+                <input id="strike" class="input" type="text" placeholder="Text input">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Premium</label>
+              <div class="control">
+                <input id="premium" class="input" type="text" placeholder="Text input">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Expiry</label>
+              <div class="control">
+                <input id="expiry" class="input" type="text" placeholder="Text input">
+              </div>
+            </div>
+            <div class="field">
+              <label class="label">Amount</label>
+              <div class="control">
+                <input id="tknAmt" class="input" type="text" placeholder="Text input">
+              </div>
+            </div>
+            <div class="field">
+              <p class="control">
+                <button type="submit" class="button is-success">
+                  Submit
+                </button>
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </section>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
