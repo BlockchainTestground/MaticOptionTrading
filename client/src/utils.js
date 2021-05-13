@@ -1,3 +1,5 @@
+
+
 const getWeb3 = () => {
   return new Promise((resolve, reject) => {
     window.addEventListener("load", async () => {
@@ -53,10 +55,13 @@ const convertToDateString = (epochTime) => {
 };
 
 const convertWeiToCrypto = (wei) => {
-  const web3 = new Web3(window.ethereum);
-  const cryptoValue = web3.utils.fromWei(wei);
+  const cryptoValue = web3.utils.fromWei(wei,"ether");
   return cryptoValue;
 };
+
+const convertCryptoToWei = (crypto) => {
+  return web3.utils.toWei(crypto, 'ether')
+}
 
 const showRetrieveExpiredFunds = (option, accounts) => {
   const expiry = new Date(option.expiry * 1000);
