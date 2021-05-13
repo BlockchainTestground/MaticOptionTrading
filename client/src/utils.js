@@ -1,5 +1,3 @@
-
-
 const getWeb3 = () => {
   return new Promise((resolve, reject) => {
     window.addEventListener("load", async () => {
@@ -55,20 +53,20 @@ const convertToDateString = (epochTime) => {
 };
 
 const convertWeiToCrypto = (wei) => {
-  const cryptoValue = web3.utils.fromWei(wei,"ether");
+  const cryptoValue = web3.utils.fromWei(wei, "ether");
   return cryptoValue;
 };
 
 const convertCryptoToWei = (crypto) => {
-  return web3.utils.toWei(crypto, 'ether')
-}
+  return web3.utils.toWei(crypto, "ether");
+};
 
 const showRetrieveExpiredFunds = (option, accounts) => {
   const expiry = new Date(option.expiry * 1000);
   return option.writer === accounts[0] &&
     !option.exercised &&
     !option.canceled &&
-    expiry < Date.now()
+    expiry > Date.now()
     ? ""
     : "none";
 };
@@ -77,7 +75,7 @@ const showExcercise = (option, accounts) => {
   const expiry = new Date(option.expiry * 1000);
   return option.buyer === accounts[0] &&
     !option.exercised &&
-    expiry < Date.now()
+    expiry > Date.now()
     ? ""
     : "none";
 };
@@ -85,4 +83,12 @@ const showExcercise = (option, accounts) => {
 const showBuy = (option) => {
   const expiry = new Date(option.expiry * 1000);
   return !option.canceled && expiry > Date.now() ? "" : "none";
+};
+
+const showCancel = (option, accounts) => {
+  return option.writer === accounts[0] &&
+    !option.canceled &&
+    /^0x0+$/.test(option.buyer)
+    ? ""
+    : "none";
 };
