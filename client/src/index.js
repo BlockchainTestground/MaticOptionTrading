@@ -38,19 +38,19 @@ function getOptionHtml(option)
   result += option.id
   result += "</td>"
   result += "<td>"
-  result += option.latestCost
+  result += convertWeiToCrypto(option.latestCost);
   result += "</td>"
   result += "<td>"
-  result += option.premium
+  result += convertWeiToCrypto(option.premium);
   result += "</td>"
   result += "<td>"
-  result += option.strike
+  result += convertWeiToCrypto(option.strike);
   result += "</td>"
   result += "<td>"
-  result += "<button onclick='cancelOption("+ option.id +")'>Cancel</button>"
-  result += `<button onclick='buyOption("+ option.id +", "+ option.premium +")' style='display:${showBuy(option)}'>Buy</button>`
-  result += `<button onclick='exerciseOption("+ option.id +", "+ option.latestCost +")' style='display:${showExcercise(option, accounts)}'>Exercise</button>`
-  result += `<button onclick='retrieveExpiredFunds("+ option.id +")' style='display:${showRetrieveExpiredFunds(option, accounts)}'>Retrieve expired funds </button>`
+  result += `<button onclick='cancelOption(${option.id})' style='display:${showCancel(option,accounts)}'>Cancel</button>`
+  result += `<button onclick='buyOption(${option.id},${option.premium})' style='display:${showBuy(option)}'>Buy</button>`
+  result += `<button onclick='exerciseOption(${option.id},${option.latestCost})' style='display:${showExcercise(option, accounts)}'>Exercise</button>`
+  result += `<button onclick='retrieveExpiredFunds(${option.id})' style='display:${showRetrieveExpiredFunds(option, accounts)}'>Retrieve expired funds </button>`
   result += "<button onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
   result += "</td>"
   result + "</tr></td>"
@@ -245,8 +245,8 @@ const writeOption = (contract, accounts) => {
     var secondsSinceEpoch = Math.round(Date.now() / 1000)
     var expiry = secondsSinceEpoch+expiry_days*86400
     await contract.methods
-      .writeOption(strike, premium, expiry, tknAmt, optionType)
-      .send({ from: accounts[0], gas: 400000, value: tknAmt });
+      .writeOption(convertCryptoToWei(strike), convertCryptoToWei(premium), expiry, convertCryptoToWei(tknAmt), optionType)
+      .send({ from: accounts[0], gas: 400000, value: convertCryptoToWei(tknAmt) });
       displayOptions(contract)
       .catch(revertReason =>
       {
