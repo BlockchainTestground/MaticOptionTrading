@@ -253,19 +253,24 @@ const writeOption = (contract, accounts) => {
         getRevertReason(revertReason.receipt.transactionHash)
       })
   });
-};
+}
+
+function connectWallet()
+{
+  console.log(2134)
+  var awaitAccounts = async function() {
+    accounts = await web3.eth.getAccounts()
+    writeOption(contract, accounts)
+    displayOptions(contract)
+  }
+  awaitAccounts()
+}
 
 async function optionTradesApp() {
   var awaitWeb3 = async function() {
     web3 = await getWeb3();
     var awaitContract = async function() {
       contract = await getContract(web3)
-      var awaitAccounts = async function() {
-        accounts = await web3.eth.getAccounts()
-        writeOption(contract, accounts)
-        displayOptions(contract)
-      }
-      awaitAccounts()
     }
     awaitContract()
   }

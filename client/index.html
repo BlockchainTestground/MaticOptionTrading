@@ -5,14 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>parménides.finance</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
   <section class="section">
-    <div class="container">
-      <h1 class="title">
-        parménides.finance
-      </h1>
+    <nav class="navbar is-transparent">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="https://bulma.io">
+          <!--img src="https://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">-->
+          Parménides Finance
+        </a>
+        <div class="navbar-burger" data-target="navbarExampleTransparentExample">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div id="navbarExampleTransparentExample" class="navbar-menu">
+        <div class="navbar-start">
+        </div>
+        <div class="navbar-end">
+          <div class="navbar-item">
+            <div class="field is-grouped">
+                <a class="button is-primary" onclick="connectWallet()">
+                  <span class="icon">
+                    <i class="fas fa-wallet"></i>
+                  </span>
+                  <span>Connect Wallet</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
+    <div class="container">
       <form id="write_option_form">
         <div class="columns">
           <div class="column">
