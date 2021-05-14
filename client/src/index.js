@@ -253,19 +253,33 @@ const writeOption = (contract, accounts) => {
         getRevertReason(revertReason.receipt.transactionHash)
       })
   });
-};
+}
+
+function connectWallet()
+{
+  var awaitAccounts = async function() {
+    accounts = await web3.eth.getAccounts()
+    writeOption(contract, accounts)
+    displayOptions()
+    document.getElementById("my-address").innerHTML = accounts[0]
+    document.getElementById("wallet-disconnected").style.display = "none"
+    document.getElementById("wallet-connected").style.display = "block"
+  }
+  awaitAccounts()
+}
+
+function disconnectWallet()
+{
+  accounts = null
+  document.getElementById("wallet-disconnected").style.display = "block"
+  document.getElementById("wallet-connected").style.display = "none"
+}
 
 async function optionTradesApp() {
   var awaitWeb3 = async function() {
     web3 = await getWeb3();
     var awaitContract = async function() {
       contract = await getContract(web3)
-      var awaitAccounts = async function() {
-        accounts = await web3.eth.getAccounts()
-        writeOption(contract, accounts)
-        displayOptions(contract)
-      }
-      awaitAccounts()
     }
     awaitContract()
   }
