@@ -114,6 +114,7 @@ const displayOthersOptions = async (options_length) => {
 }
 
 const displayOptionsIBought = async (options_length) => {
+  console.log(options_length)
   var options_html = "<table class='table'>"
     + "<thead><tr><th>Amount</th>"
     + "<th>Buyer</th>"
@@ -130,7 +131,9 @@ const displayOptionsIBought = async (options_length) => {
 
   for(var i=0; i<options_length; i++)
   {
+    console.log(22)
     option = await contract.methods.maticOpts(i).call()
+    console.log(option)
     if(option.buyer == accounts[0])
     {
       options_html += getOptionHtml(option)
@@ -257,23 +260,25 @@ const writeOption = (contract, accounts) => {
 
 function connectWallet()
 {
-  var awaitWeb3 = async function() {
-    web3 = await getWeb3();
-    var awaitContract = async function() {
-      contract = await getContract(web3)
-      var awaitAccounts = async function() {
-        accounts = await web3.eth.getAccounts()
-        writeOption(contract, accounts)
-        displayOptions(contract)
-      }
-      awaitAccounts()
+  var awaitContract = async function() {
+    contract = await getContract(web3)
+    var awaitAccounts = async function() {
+      accounts = await web3.eth.getAccounts()
+      writeOption(contract, accounts)
+      displayOptions(contract)
+      console.log(accounts)
     }
-    awaitContract()
+    awaitAccounts()
   }
-  awaitWeb3()
+  awaitContract()
 }
 
 async function optionTradesApp() {
+  var awaitWeb3 = async function() {
+    web3 = await getWeb3();
+  }
+  awaitWeb3()
+  console.log(23)
 }
 
 optionTradesApp();
