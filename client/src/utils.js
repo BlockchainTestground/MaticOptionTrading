@@ -82,7 +82,7 @@ const showExcercise = (option, accounts) => {
 
 const showBuy = (option) => {
   const expiry = new Date(option.expiry * 1000);
-  return !option.canceled && expiry > Date.now() ? "" : "none";
+  return  option.writer != accounts[0] && !option.canceled && expiry > Date.now() ? "" : "none";
 };
 
 const showCancel = (option, accounts) => {
