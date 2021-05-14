@@ -27,12 +27,23 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="field is-grouped">
-                <a class="button is-primary" onclick="connectWallet()">
-                  <span class="icon">
-                    <i class="fas fa-wallet"></i>
-                  </span>
-                  <span>Connect Wallet</span>
-                </a>
+                <div id="wallet-connected" style="display: none">
+                  <p id="my-address"></p>
+                  <a id="connect-button" class="button is-primary" onclick="disconnectWallet()">
+                    <span class="icon">
+                      <i class="fas fa-wallet"></i>
+                    </span>
+                    <span>Logout</span>
+                  </a>
+                </div>
+                <div id="wallet-disconnected">
+                  <a id="connect-button" class="button is-primary" onclick="connectWallet()">
+                    <span class="icon">
+                      <i class="fas fa-wallet"></i>
+                    </span>
+                    <span>Connect Wallet</span>
+                  </a>
+                </div>
               </p>
             </div>
           </div>
