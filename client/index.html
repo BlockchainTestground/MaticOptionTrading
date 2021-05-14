@@ -27,24 +27,29 @@
         <div class="navbar-end">
           <div class="navbar-item">
             <div class="field is-grouped">
-                <div id="wallet-connected" style="display: none">
-                  <p id="my-address"></p>
-                  <a id="connect-button" class="button is-primary" onclick="disconnectWallet()">
-                    <span class="icon">
-                      <i class="fas fa-wallet"></i>
-                    </span>
-                    <span>Logout</span>
-                  </a>
-                </div>
-                <div id="wallet-disconnected">
-                  <a id="connect-button" class="button is-primary" onclick="connectWallet()">
-                    <span class="icon">
-                      <i class="fas fa-wallet"></i>
-                    </span>
-                    <span>Connect Wallet</span>
-                  </a>
-                </div>
-              </p>
+              <div id="loading-web3">
+                <p>Loading web3...</p>
+              </div>
+              <div id="wrong-network" style="display: none">
+                <p>Wrong network, please connect to mumbai testnet</p>
+              </div>
+              <div id="wallet-connected" style="display: none">
+                <p id="my-address"></p>
+                <a id="connect-button" class="button is-primary" onclick="disconnectWallet()">
+                  <span class="icon">
+                    <i class="fas fa-wallet"></i>
+                  </span>
+                  <span>Logout</span>
+                </a>
+              </div>
+              <div id="wallet-disconnected" style="display: none">
+                <a id="connect-button" class="button is-primary" onclick="connectWallet()">
+                  <span class="icon">
+                    <i class="fas fa-wallet"></i>
+                  </span>
+                  <span>Connect Wallet</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
