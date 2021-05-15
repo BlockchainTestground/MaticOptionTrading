@@ -83,9 +83,9 @@ const showExcercise = (option, accounts) => {
 const showBuy = (option) => {
   const expiry = new Date(option.expiry * 1000);
   return !/^0x0+$/.test(option.buyer) ||
-     option.writer === accounts[0] || 
-     option.canceled ||
-     expiry < Date.now()
+    option.writer === accounts[0] ||
+    option.canceled ||
+    expiry < Date.now()
     ? "none"
     : "";
 };
@@ -96,4 +96,19 @@ const showCancel = (option, accounts) => {
     /^0x0+$/.test(option.buyer)
     ? ""
     : "none";
+};
+
+var getJSON = function (url, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url, true);
+  xhr.responseType = "json";
+  xhr.onload = function () {
+    var status = xhr.status;
+    if (status === 200) {
+      callback(null, xhr.response);
+    } else {
+      callback(status, xhr.response);
+    }
+  };
+  xhr.send();
 };
