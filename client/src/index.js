@@ -52,7 +52,7 @@ function getOptionHtml(option)
 }
 
 const displayMyOptions = async (options_length) => {
-  var options_html = "<table class='table'>"
+  var options_html = "<table class='table' class='is-loading'>"
     + "<thead><tr><th>Type</th>"
     + "<th>Amount</th>"
     + "<th>Buyer</th>"
