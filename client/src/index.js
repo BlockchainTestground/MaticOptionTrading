@@ -33,7 +33,7 @@ function getOptionHtml(option)
   result += "</td>"
   result += "<td>"
   result += convertWeiToCrypto(option.latestCost);
-  result += "<button onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
+  result += "<button class='button is-small is-primary is-outlined' onclick='updateExerciseCost("+ option.id +")'>Update exercise cost</button>"
   result += "</td>"
   result += "<td>"
   result += convertWeiToCrypto(option.premium);
@@ -42,10 +42,10 @@ function getOptionHtml(option)
   result += convertWeiToCrypto(option.strike);
   result += "</td>"
   result += "<td>"
-  result += `<button onclick='cancelOption(${option.id})' style='display:${showCancel(option,accounts)}'>Cancel</button>`
-  result += `<button onclick='buyOption(${option.id},${option.premium})' style='display:${showBuy(option)}'>Buy</button>`
-  result += `<button onclick='exerciseOption(${option.id},${option.latestCost})' style='display:${showExcercise(option, accounts)}'>Exercise</button>`
-  result += `<button onclick='retrieveExpiredFunds(${option.id})' style='display:${showRetrieveExpiredFunds(option, accounts)}'>Retrieve expired funds </button>`
+  result += `<button class='button is-small is-danger is-outlined' onclick='cancelOption(${option.id})' style='display:${showCancel(option,accounts)}'>Cancel</button>`
+  result += `<button class='button is-small is-primary is-outlined' onclick='buyOption(${option.id},${option.premium})' style='display:${showBuy(option)}'>Buy</button>`
+  result += `<button class='button is-small is-primary is-outlined' onclick='exerciseOption(${option.id},${option.latestCost})' style='display:${showExcercise(option, accounts)}'>Exercise</button>`
+  result += `<button class='button is-small is-primary is-outlined' onclick='retrieveExpiredFunds(${option.id})' style='display:${showRetrieveExpiredFunds(option, accounts)}'>Retrieve expired funds </button>`
   result += "</td>"
   result + "</tr></td>"
   return result
