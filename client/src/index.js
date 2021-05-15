@@ -284,6 +284,8 @@ function getMaticPrice() {
 }
 
 async function optionTradesApp() {
+  $("#footer").load("html/footer.html", function(){
+  });
   getMaticPrice();
   var awaitWeb3 = async function () {
     web3 = await getWeb3();
