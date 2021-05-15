@@ -214,13 +214,21 @@ let strike = document.getElementById("strike").value;
 let premium = document.getElementById("premium").value;
 let expiry_days = document.getElementById("expiry").value;
 let tknAmt = document.getElementById("tknAmt").value;
-let optionType = "CALL";
+let optionType = "PUT";
 
 function updateSummary() {
-  document.getElementById("summary_strike").innerHTML = "Strike price: " + strike
+  big_strike = new Big(strike)
+  big_tknAmt = new Big(tknAmt)
+  if(optionType=="CALL")
+    big_cost_plus_premium = (big_strike.mul(big_tknAmt)).plus(premium)
+  else
+    big_cost_plus_premium = (big_strike.mul(big_tknAmt)).minus(premium)
+  big_break_even = big_cost_plus_premium.div(tknAmt)
+  document.getElementById("summary_strike").innerHTML = "Strike Price: " + strike
+  document.getElementById("summary_cost").innerHTML = "Cost: " + big_strike.mul(big_tknAmt)
   document.getElementById("summary_premium").innerHTML = "Premium: " + premium
-  document.getElementById("summary_usd_value").innerHTML = "USD Value:: ??"
-  document.getElementById("summary_break_even").innerHTML = "Break Even: ??"
+  document.getElementById("cost_plus_premium").innerHTML = "Cost plus premium: " + big_cost_plus_premium
+  document.getElementById("summary_break_even").innerHTML = "Break even: $" + big_break_even
 }
 
 const writeOption = (contract, accounts) => {
@@ -291,7 +299,19 @@ async function optionTradesApp() {
       if(netId == 80001)
       {
         document.getElementById("loading-web3").style.display = "none"
-        document.getElementById("wallet-connected").style.display = "block"
+        var awaitContract = async function() {
+          contract = await getContract(web3)
+          var awaitAccounts = async function() {
+            accounts = await web3.eth.getAccounts()
+            writeOption(contract, accounts)
+            displayOptions()
+            document.getElementById("my-address").innerHTML = accounts[0]
+            document.getElementById("wallet-disconnected").style.display = "none"
+            document.getElementById("wallet-connected").style.display = "block"
+          }
+          awaitAccounts()
+        }
+        awaitContract()
       }else
       {
         document.getElementById("loading-web3").style.display = "none"
@@ -300,19 +320,6 @@ async function optionTradesApp() {
         document.getElementById("wrong-network").style.display = "block"
       }
     })
-    var awaitContract = async function() {
-      contract = await getContract(web3)
-      var awaitAccounts = async function() {
-        accounts = await web3.eth.getAccounts()
-        writeOption(contract, accounts)
-        displayOptions()
-        document.getElementById("my-address").innerHTML = accounts[0]
-        document.getElementById("wallet-disconnected").style.display = "none"
-        document.getElementById("wallet-connected").style.display = "block"
-      }
-      awaitAccounts()
-    }
-    awaitContract()
   }
   awaitWeb3()
 }
