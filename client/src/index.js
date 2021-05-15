@@ -1,46 +1,29 @@
 var contract;
 var accounts;
 var web3;
+var matic_price;
 
 function getOptionHtml(option) {
-  result = "";
-  result += "<tr>";
-  result += "<td>";
+  var result = "<div class='box'>"
   if (option.optionType == 0) {
-    result += "PUT";
+    result += "<h4 id='const' class='title is-3'>PUT</h4>"
   } else {
-    result += "CALL";
+    result += "<h4 id='const' class='title is-3'>CALL</h4>"
   }
-  result += "</td>";
-  result += "<td>";
-  result += convertWeiToCrypto(option.amount);
-  result += "</td>";
-  result += "<td>";
-  result += option.buyer.substring(0, 7);
-  result += "</td>";
-  result += "<td>";
-  result += option.writer.substring(0, 7);
-  result += "</td>";
-  result += "<td>";
-  result += option.exercised;
-  result += "</td>";
-  result += "<td>";
-  result += convertToDateString(option.expiry);
-  result += "</td>";
-  result += "<td>";
-  result += convertWeiToCrypto(option.latestCost);
-  result +=
-    "<button class='button is-small is-primary is-outlined' onclick='updateExerciseCost(" +
-    option.id +
-    ")'>Update exercise cost</button>";
-  result += "</td>";
-  result += "<td>";
-  result += convertWeiToCrypto(option.premium);
-  result += "</td>";
-  result += "<td>";
-  result += convertWeiToCrypto(option.strike);
-  result += "</td>";
-  result += "<td>";
+
+  result += "<article class='message is-primary'>"
+  result += "<p>Amount: " + convertWeiToCrypto(option.amount) +"</p>"
+  result += "<p>Buyer: " + option.buyer.substring(0, 7) +"</p>"
+  result += "<p>Writer: " + option.writer.substring(0, 7) +"</p>"
+  result += "<p>Exercised: " + option.exercised +"</p>"
+  result += "<p>Expiry: " + convertToDateString(option.expiry) +"</p>"
+  result += "<p>Latest Cost: " + convertWeiToCrypto(option.latestCost) +"</p>"
+  result += "<button class='button is-small is-primary is-outlined' onclick='updateExerciseCost(" +
+              option.id +
+            ")'>Update exercise cost</button>"
+  result += "<p>Premium: " + convertWeiToCrypto(option.premium) +"</p>"
+  result += "<p>Strike: " + convertWeiToCrypto(option.strike) +"</p>"
+
   result += `<button class='button is-small is-danger is-outlined' onclick='cancelOption(${
     option.id
   })' style='display:${showCancel(option, accounts)}'>Cancel</button>`;
@@ -56,105 +39,103 @@ function getOptionHtml(option) {
     option,
     accounts
   )}'>Retrieve expired funds </button>`;
-  result += "</td>";
-  result + "</tr></td>";
+
+  result += "</article>"
+  result += "</div>"
   return result;
 }
 
 const displayMyOptions = async (options_length) => {
-  var options_html =
-    "<table class='table' class='is-loading'>" +
-    "<thead><tr><th>Type</th>" +
-    "<th>Amount</th>" +
-    "<th>Buyer</th>" +
-    "<th>Writer</th>" +
-    "<th>Exercised</th>" +
-    "<th>Expiry</th>" +
-    "<th>Latest cost</th>" +
-    "<th>Premium</th>" +
-    "<th>Strike</th>" +
-    "<th>Actions</th>" +
-    "</thead>";
-
+  var result = ""
   var option_count = 0;
   for (var i = 0; i < options_length; i++) {
-    option = await contract.methods.maticOpts(i).call();
+    option = await contract.methods.maticOpts(i).call()
     if (option.writer == accounts[0] && !option.canceled) {
-      options_html += getOptionHtml(option);
-      option_count += 1;
-      if (option_count > 5) break;
+      result += getOptionHtml(option)
+      option_count += 1
+      if (option_count > 5) break
     }
   }
-  options_html += "</table>";
-  $("#my_options").html(options_html);
+  return result
 };
 
 const displayOthersOptions = async (options_length) => {
-  var options_html =
-    "<table class='table'>" +
-    "<thead><tr><th>Type</th>" +
-    "<th>Amount</th>" +
-    "<th>Buyer</th>" +
-    "<th>Writer</th>" +
-    "<th>Exercised</th>" +
-    "<th>Expiry</th>" +
-    "<th>Latest cost</th>" +
-    "<th>Premium</th>" +
-    "<th>Strike</th>" +
-    "<th>Actions</th>" +
-    "</thead>";
-
+  var result = ""
   var option_count = 0;
   for (var i = 0; i < options_length; i++) {
-    option = await contract.methods.maticOpts(i).call();
+    option = await contract.methods.maticOpts(i).call()
     if (
       option.writer != accounts[0] &&
       option.buyer != accounts[0] &&
       !option.canceled
     ) {
-      options_html += getOptionHtml(option);
-      option_count += 1;
-      if (option_count > 5) break;
+      result += getOptionHtml(option)
+      option_count += 1
+      if (option_count > 5) break
     }
   }
-  options_html += "</table>";
-  $("#others_options").html(options_html);
+  return result
 };
 
 const displayOptionsIBought = async (options_length) => {
-  var options_html =
-    "<table class='table'>" +
-    "<thead><tr><th>Type</th>" +
-    "<th>Amount</th>" +
-    "<th>Buyer</th>" +
-    "<th>Writer</th>" +
-    "<th>Exercised</th>" +
-    "<th>Expiry</th>" +
-    "<th>Latest cost</th>" +
-    "<th>Premium</th>" +
-    "<th>Strike</th>" +
-    "<th>Actions</th>" +
-    "</thead>";
-
+  var result = ""
   var option_count = 0;
   for (var i = 0; i < options_length; i++) {
-    option = await contract.methods.maticOpts(i).call();
+    option = await contract.methods.maticOpts(i).call()
     if (option.buyer == accounts[0] && !option.canceled) {
-      options_html += getOptionHtml(option);
-      option_count += 1;
-      if (option_count > 5) break;
+      result += getOptionHtml(option)
+      option_count += 1
+      if (option_count > 5) break
     }
   }
-  options_html += "</table>";
-  $("#options_I_bought").html(options_html);
+  return result
 };
 
-const displayOptions = async () => {
-  options_length = await contract.methods.getMaticOptsLength().call();
-  displayMyOptions(options_length);
-  displayOthersOptions(options_length);
-  displayOptionsIBought(options_length);
-};
+function onWriteClick()
+{
+  document.getElementById("main-content-title").innerHTML = "Write an Option"
+  document.getElementById("main-content").innerHTML = ""
+  $("#main-content").load("html/write_option_form.html", function(){
+    $("#strike").val(matic_price)
+    writeOption(contract, accounts)
+  });
+}
+
+function onExploreClick()
+{
+  document.getElementById("main-content-title").innerHTML = "Explore"
+  document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
+  var awaitOptions = async function () {
+    var options_length = await contract.methods.getMaticOptsLength().call();
+    var options_html = await displayOthersOptions(options_length)
+    document.getElementById("main-content").innerHTML = options_html;
+  }
+  awaitOptions()
+}
+
+function onYourOptionsClick()
+{
+  document.getElementById("main-content-title").innerHTML = "Your Options"
+  document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
+  var awaitOptions = async function () {
+    var options_length = await contract.methods.getMaticOptsLength().call();
+    var options_html = await displayMyOptions(options_length)
+    document.getElementById("main-content").innerHTML = options_html;
+  }
+  awaitOptions()
+}
+
+function onOptionsYouBoughtClick()
+{
+  document.getElementById("main-content-title").innerHTML = "Options You Bought"
+  document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
+  var awaitOptions = async function () {
+    var options_length = await contract.methods.getMaticOptsLength().call();
+    var options_html = await displayOptionsIBought(options_length)
+    document.getElementById("main-content").innerHTML = options_html;
+  }
+  awaitOptions()
+}
 
 const cancelOption = async (option_id) => {
   const result = await contract.methods
@@ -163,7 +144,6 @@ const cancelOption = async (option_id) => {
     .catch((revertReason) => {
       getRevertReason(revertReason.receipt.transactionHash);
     });
-  displayOptions(contract);
 };
 
 const buyOption = async (option_id, premium) => {
@@ -173,7 +153,6 @@ const buyOption = async (option_id, premium) => {
     .catch((revertReason) => {
       getRevertReason(revertReason.receipt.transactionHash);
     });
-  displayOptions(contract);
 };
 
 const exerciseOption = async (option_id, latest_cost) => {
@@ -183,7 +162,6 @@ const exerciseOption = async (option_id, latest_cost) => {
     .catch((revertReason) => {
       getRevertReason(revertReason.receipt.transactionHash);
     });
-  displayOptions(contract);
 };
 
 const retrieveExpiredFunds = async (option_id) => {
@@ -193,7 +171,6 @@ const retrieveExpiredFunds = async (option_id) => {
     .catch((revertReason) => {
       getRevertReason(revertReason.receipt.transactionHash);
     });
-  displayOptions(contract);
 };
 
 const updateExerciseCost = async (option_id) => {
@@ -203,13 +180,12 @@ const updateExerciseCost = async (option_id) => {
     .catch((revertReason) => {
       getRevertReason(revertReason.receipt.transactionHash);
     });
-  displayOptions(contract);
 };
 
-let strike = document.getElementById("strike").value;
-let premium = document.getElementById("premium").value;
-let expiry_days = document.getElementById("expiry").value;
-let tknAmt = document.getElementById("tknAmt").value;
+let strike = 0;
+let premium = 0;
+let expiry_days = 0;
+let tknAmt = 0;
 let optionType = "PUT";
 
 function updateSummary() {
@@ -281,8 +257,6 @@ const writeOption = (contract, accounts) => {
 function connectWallet() {
   var awaitAccounts = async function () {
     accounts = await web3.eth.getAccounts();
-    writeOption(contract, accounts);
-    displayOptions();
     document.getElementById("my-address").innerHTML = accounts[0];
     document.getElementById("wallet-disconnected").style.display = "none";
     document.getElementById("wallet-connected").style.display = "block";
@@ -303,7 +277,7 @@ function getMaticPrice() {
       if (err !== null) {
         alert("Something went wrong: " + err);
       } else {
-        document.getElementById("strike").placeholder = data["price"];
+        matic_price = data["price"];
       }
     }
   );
@@ -321,7 +295,7 @@ async function optionTradesApp() {
           var awaitAccounts = async function () {
             accounts = await web3.eth.getAccounts();
             writeOption(contract, accounts);
-            displayOptions();
+            onWriteClick()
             document.getElementById("my-address").innerHTML = accounts[0];
             document.getElementById("wallet-disconnected").style.display =
               "none";
