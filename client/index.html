@@ -9,133 +9,156 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <section class="section">
-    <nav class="navbar is-transparent">
-      <div class="navbar-brand">
-        <a class="navbar-item" href="https://bulma.io">
-          <!--img src="https://bulma.io/images/bulma-logo.png" alt="Bulma: a modern CSS framework based on Flexbox" width="112" height="28">-->
-          Parménides Finance
-        </a>
-        <div class="navbar-burger" data-target="navbarExampleTransparentExample">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-      <div id="navbarExampleTransparentExample" class="navbar-menu">
-        <div class="navbar-start">
-        </div>
-        <div class="navbar-end">
-          <div class="navbar-item">
-            <div class="field is-grouped">
-              <div id="loading-web3">
-                <p>Loading web3...</p>
-              </div>
-              <div id="wrong-network" style="display: none">
-                <p>Wrong network, please connect to mumbai testnet</p>
-              </div>
-              <div id="wallet-connected" style="display: none">
-                <p id="my-address"></p>
-                <a id="connect-button" class="button is-primary" onclick="disconnectWallet()">
-                  <span class="icon">
-                    <i class="fas fa-wallet"></i>
-                  </span>
-                  <span>Logout</span>
-                </a>
-              </div>
-              <div id="wallet-disconnected" style="display: none">
-                <a id="connect-button" class="button is-primary" onclick="connectWallet()">
-                  <span class="icon">
-                    <i class="fas fa-wallet"></i>
-                  </span>
-                  <span>Connect Wallet</span>
-                </a>
-              </div>
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <div class="columns">
+        <div class="column is-12">
+          <div class="container content">
+            <i class="is-large fab fa-discord"></i>
+            <i class="is-large fas fa-code"></i>
+            <h1 class="title">Parmenides</h1>
+            <h3 class="subtitle">
+              Option trade with matic's ultra low gas fees
+            </h3>
+            <div id="wrong-network" style="display: none">
+              <p>Wrong network, please connect to mumbai testnet</p>
             </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container">
-      <form id="write_option_form">
-        <div class="columns">
-          <div class="column">
-            <div class="control">
-              <label class="radio">
-                <input id="put" type="radio" name="answer" checked>
-                PUT
-              </label>
-              <label id="call" class="radio">
-                <input type="radio" name="answer">
-                CALL
-              </label>
-            </div>
-          </div>
-          <div class="column">
-            <div class="field">
-              <label class="label">Amount (in Matic)</label>
-              <div class="control">
-                <input id="tknAmt" class="input" type="text" placeholder="">
-              </div>
-            </div>
-            <div class="field">
-              <label class="label">Expiry</label>
-              <div class="select">
-                <select id="expiry">
-                  <option value="1">1 day</option>
-                  <option value="2">2 days</option>
-                  <option value="3">3 days</option>
-                  <option value="7">7 days</option>
-                  <option value="10">10 days</option>
-                  <option value="15">15 days</option>
-                  <option value="20">20 days</option>
-                  <option value="30">30 days</option>
-                </select>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-content">
-                <div class="content">
-                  <h5 class="subtitle is-5">Summary</h5>
-                  <p id="summary_strike">Strike Price:</p>
-                  <p id="summary_cost">USD Value:</p>
-                  <p id="summary_premium">Premium:</p>
-                  <p id="cost_plus_premium">Cost plus premium:</p>
-                  <p id="summary_break_even">Cost plus premium:</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="column">
-            <div class="field">
-              <label class="label">Strike</label>
-              <p class="control has-icons-left has-icons-right">
-                <input id="strike" class="input" type="text" placeholder="">
-                <span class="icon is-small is-left">
-                  $
+            <div id="wallet-connected" style="display: none">
+              <p id="my-address"></p>
+              <a id="connect-button" class="button is-primary" onclick="disconnectWallet()">
+                <span class="icon">
+                  <i class="fas fa-wallet"></i>
                 </span>
-              </p>
+                <span>Logout</span>
+              </a>
             </div>
-            <div class="field">
-              <label class="label">Premium (in Matic)</label>
-              <div class="control">
-                <input id="premium" class="input" type="text" placeholder="">
-              </div>
+            <div id="wallet-disconnected" style="display: none">
+              <a id="connect-button" class="button is-primary" onclick="connectWallet()">
+                <span class="icon">
+                  <i class="fas fa-wallet"></i>
+                </span>
+                <span>Connect Wallet</span>
+              </a>
             </div>
-            <div class="field">
-              <p class="control">
-                <button type="submit" class="button is-success">
-                  Submit
-                </button>
-              </p>
+            <div id="loading-web3">
+              <p>Loading web3...</p>
             </div>
-          </div>
-          <div class="column">
-            <!--Fourth column-->
           </div>
         </div>
-      </form>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-3">
+          <aside class="is-medium menu">
+        <p class="menu-label">
+          menu
+        </p>
+        <ul class="menu-list">
+          <li class="is-right"><a href="#const" class="is-active"><i class="fas fa-pencil-alt"></i>Write an option</a></li>
+          <li><a href="#let" class="is-active"><i class="far fa-compass"></i> Explore</a></li>
+          <li><a href="#let" class="is-active"><i class="fas fa-user"></i> Your options</a></li>
+          <li><a href="#let" class="is-active"><i class="fas fa-receipt"></i> Option you bought</a></li>
+        </ul>
+          </aside>
+        </div>
+        <div class="column is-9">
+          <div class="content is-medium">
+        <h3 class="title is-3">Write an option</h3>
+            <div class="box">
+              <form id="write_option_form">
+                <div class="columns">
+                  <div class="column">
+                    <div class="control">
+                      <label class="radio">
+                        <input id="put" type="radio" name="answer" checked>
+                        PUT
+                      </label>
+                      <label id="call" class="radio">
+                        <input type="radio" name="answer">
+                        CALL
+                      </label>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div class="field">
+                      <label class="label">Amount (in Matic)</label>
+                      <div class="control">
+                        <input id="tknAmt" class="input" type="text" placeholder="">
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label class="label">Expiry</label>
+                      <div class="select">
+                        <select id="expiry">
+                          <option value="1">1 day</option>
+                          <option value="2">2 days</option>
+                          <option value="3">3 days</option>
+                          <option value="7">7 days</option>
+                          <option value="10">10 days</option>
+                          <option value="15">15 days</option>
+                          <option value="20">20 days</option>
+                          <option value="30">30 days</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="card">
+                      <div class="card-content">
+                        <article class="message is-primary">
+                          <span class="icon has-text-primary">
+                            <i class="fas fa-info-circle"></i>
+                          </span>
+                          <div class="message-body">
+                            <h5 class="subtitle is-5">Summary</h5>
+                            <p id="summary_strike">Strike Price:</p>
+                            <p id="summary_cost">USD Value:</p>
+                            <p id="summary_premium">Premium:</p>
+                            <p id="cost_plus_premium">Cost plus premium:</p>
+                            <p id="summary_break_even">Cost plus premium:</p>
+                          </div>
+                        </article>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <div class="field">
+                      <label class="label">Strike</label>
+                      <p class="control has-icons-left has-icons-right">
+                        <input id="strike" class="input" type="text" placeholder="">
+                        <span class="icon is-small is-left">
+                          $
+                        </span>
+                      </p>
+                    </div>
+                    <div class="field">
+                      <label class="label">Premium (in Matic)</label>
+                      <div class="control">
+                        <input id="premium" class="input" type="text" placeholder="">
+                      </div>
+                    </div>
+                    <div class="field">
+                      <p class="control">
+                        <button type="submit" class="button is-success">
+                          Submit
+                        </button>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="column">
+                    <!--Fourth column-->
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
       <h2 class="title">Explore Options</h2>
       <div id="others_options">
         <progress class="progress is-small is-primary" max="100">15%</progress>

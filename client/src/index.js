@@ -59,7 +59,6 @@ function getOptionHtml(option) {
   result += "</td>";
   result + "</tr></td>";
   return result;
->>>>>>> 107d7ac5c5963ebd66ace9e996ae223d66534973
 }
 
 const displayMyOptions = async (options_length) => {
@@ -315,7 +314,6 @@ async function optionTradesApp() {
   var awaitWeb3 = async function () {
     web3 = await getWeb3();
     web3.eth.net.getId((err, netId) => {
-      console.log(netId);
       if (netId == 80001) {
         document.getElementById("loading-web3").style.display = "none";
         var awaitContract = async function () {
