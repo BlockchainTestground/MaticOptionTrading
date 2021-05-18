@@ -65,9 +65,10 @@ const displayOthersOptions = async (options_length) => {
   for (var i = 0; i < options_length; i++) {
     option = await contract.methods.maticOpts(i).call()
     if (
-      option.writer != accounts[0] &&
-      option.buyer != accounts[0] &&
-      !option.canceled
+      true
+      //option.writer != accounts[0] &&
+      //option.buyer != accounts[0] &&
+      //!option.canceled
     ) {
       result += getOptionHtml(option)
       option_count += 1
