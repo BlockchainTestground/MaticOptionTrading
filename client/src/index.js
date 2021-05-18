@@ -53,7 +53,7 @@ const displayMyOptions = async (options_length) => {
     if (option.writer == accounts[0] && !option.canceled) {
       result += getOptionHtml(option)
       option_count += 1
-      if (option_count > 5) break
+      //if (option_count > 5) break
     }
   }
   return result
@@ -62,6 +62,7 @@ const displayMyOptions = async (options_length) => {
 const displayOthersOptions = async (options_length) => {
   var result = ""
   var option_count = 0;
+  console.log("Total: "+option_count)
   for (var i = 0; i < options_length; i++) {
     option = await contract.methods.maticOpts(i).call()
     if (
@@ -70,9 +71,11 @@ const displayOthersOptions = async (options_length) => {
       //option.buyer != accounts[0] &&
       //!option.canceled
     ) {
+      console.log(i)
+      console.log(option)
       result += getOptionHtml(option)
       option_count += 1
-      if (option_count > 5) break
+      //if (option_count > 5) break
     }
   }
   return result
@@ -86,7 +89,7 @@ const displayOptionsIBought = async (options_length) => {
     if (option.buyer == accounts[0] && !option.canceled) {
       result += getOptionHtml(option)
       option_count += 1
-      if (option_count > 5) break
+      //if (option_count > 5) break
     }
   }
   return result
@@ -108,6 +111,7 @@ function onExploreClick()
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
     var options_length = await contract.methods.getMaticOptsLength().call();
+    console.log(options_length)
     var options_html = await displayOthersOptions(options_length)
     document.getElementById("main-content").innerHTML = options_html;
   }
