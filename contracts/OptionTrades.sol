@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity 0.8.0;
 
 import "./dependencies/LinkTokenInterface.sol";
@@ -8,7 +10,6 @@ contract OptionTrades {
     AggregatorV3Interface internal maticFeed;
     //Interface for LINK token functions
     LinkTokenInterface internal LINK;
-    uint maticPrice;
     address payable contractAddr;
 
     bytes32 callHash = keccak256(abi.encodePacked("CALL"));
@@ -26,7 +27,6 @@ contract OptionTrades {
         bool exercised; //Has option been exercised
         bool canceled; //Has option been canceled
         uint id; //Unique ID of option, also array index
-        uint latestCost; //Helper to show last updated cost to exercise
         address payable writer; //Issuer of option
         address payable buyer; //Buyer of option
     }
@@ -67,28 +67,23 @@ contract OptionTrades {
         return uint(price);
     }
     
-    //Updates prices to latest
-    function updatePrices() internal {
-        maticPrice = getMaticPrice();
-    }
-    
     //Allows user to write a covered call option
     //Takes which token, a strike price(USD per token w/18 decimal places), premium(same unit as token), expiration time(unix) and how many tokens the contract is for
     function writeOption(uint strike, uint premium, uint expiry, uint tknAmt, string memory optionType) public payable {
-        bytes32 optionType = keccak256(abi.encodePacked(optionType));
-        require(optionType == callHash || optionType == putHash, "Only CALL and PUT option types are supported");
+        bytes32 optionTypeHash = keccak256(abi.encodePacked(optionType));
+        require(optionTypeHash == callHash || optionTypeHash == putHash, "Only CALL and PUT option types are supported");
         require(msg.value == tknAmt, "Incorrect amount of Matic supplied"); 
-        updatePrices();
+        uint256 maticPrice = getMaticPrice();
+
         OptionType optionTypeEnum;
-        if(optionType == callHash)
+        if(optionTypeHash == callHash)
         {
             optionTypeEnum = OptionType.CALL;
         }else
         {
             optionTypeEnum = OptionType.PUT;
         }
-        uint latestCost = (strike * tknAmt) / (maticPrice * 10**10); //current cost to exercise in Matic, decimal places corrected
-        maticOpts.push(option(optionTypeEnum, strike, premium, expiry, tknAmt, false, false, maticOpts.length, latestCost, payable(msg.sender), payable(address(0))));
+        maticOpts.push(option(optionTypeEnum, strike, premium, expiry, tknAmt, false, false, maticOpts.length, payable(msg.sender), payable(address(0))));
     }
     
     //Allows option writer to cancel and get their funds back from an unpurchased option
@@ -102,7 +97,6 @@ contract OptionTrades {
     
     //Purchase a call option, needs desired token, ID of option and payment
     function buyOption(uint ID) public payable {
-        updatePrices();
         require(!maticOpts[ID].canceled && maticOpts[ID].expiry > block.timestamp, "Option is canceled/expired and cannot be bought");
         //Transfer premium payment from buyer
         require(msg.value == maticOpts[ID].premium, "Incorrect amount of MATIC sent for premium");
@@ -119,7 +113,7 @@ contract OptionTrades {
         require(!maticOpts[ID].exercised, "Option has already been exercised");
         require(maticOpts[ID].expiry > block.timestamp, "Option is expired");
         //Conditions are met, proceed to payouts
-        updatePrices();
+        uint256 maticPrice = getMaticPrice();
         //Cost to exercise
         uint exerciseVal = maticOpts[ID].strike*maticOpts[ID].amount;
         //Equivalent MATIC value using Chainlink feed
@@ -154,12 +148,88 @@ contract OptionTrades {
     
     //This is a helper function to help the user see what the cost to exercise an option is currently before they do so
     //Updates lastestCost member of option which is publicly viewable
-    function updateExerciseCost(uint ID) public {
-        updatePrices();
-        maticOpts[ID].latestCost = (maticOpts[ID].strike * maticOpts[ID].amount) / (maticPrice * 10**10);
+    function getExerciseCost(uint ID) public view returns(uint256) {
+        uint256 maticPrice = getMaticPrice();
+        return (maticOpts[ID].strike * maticOpts[ID].amount) / (maticPrice * 10**10);
     }
 
-    function getMaticOptsLength() public returns (uint256 maticOptsLength) {
+    function getMaticOptsLength() public view returns (uint256 maticOptsLength) {
         return maticOpts.length;
+    }
+
+    function getMaticOptsByAddress(
+        address _address,
+        bool include_if_writer,
+        bool include_if_buyer,
+        bool exclude_expired,
+        bool exclude_canceled,
+        bool exclude_exercised,
+        bool exclude_bought
+    ) public view returns (uint256[] memory optionIds) {
+        uint resultLength = 0;
+        for (uint i = 0; i < maticOpts.length; i++)
+        {
+            if(
+                !(exclude_expired && maticOpts[i].expiry > block.timestamp)
+                && !(exclude_canceled && maticOpts[i].canceled)
+                && !(exclude_exercised && maticOpts[i].canceled)
+                && !(exclude_bought && maticOpts[i].buyer != address(0))
+                && ((include_if_writer && maticOpts[i].writer == _address)
+                    || include_if_buyer && maticOpts[i].buyer == _address)
+            )
+            {
+                resultLength+=1;
+            }
+        }
+        uint[] memory result = new uint[](resultLength);
+        for (uint i = 0; i < maticOpts.length; i++)
+        {
+            if(
+                !(exclude_expired && maticOpts[i].expiry > block.timestamp)
+                && !(exclude_canceled && maticOpts[i].canceled)
+                && !(exclude_exercised && maticOpts[i].canceled)
+                && !(exclude_bought && maticOpts[i].buyer != address(0))
+                && ((include_if_writer && maticOpts[i].writer == _address)
+                    || include_if_buyer && maticOpts[i].buyer == _address)
+            )
+            {
+                result[i] = i;
+            }
+        }
+        return result;
+    }
+
+    function getMaticOpts(
+        bool exclude_expired,
+        bool exclude_canceled,
+        bool exclude_exercised,
+        bool exclude_bought
+    ) public view returns (uint256[] memory optionIds) {
+        uint resultLength = 0;
+        for (uint i = 0; i < maticOpts.length; i++)
+        {
+            if(
+                !(exclude_expired && maticOpts[i].expiry > block.timestamp)
+                && !(exclude_canceled && maticOpts[i].canceled)
+                && !(exclude_exercised && maticOpts[i].canceled)
+                && !(exclude_bought && maticOpts[i].buyer != address(0))
+            )
+            {
+                resultLength+=1;
+            }
+        }
+        uint[] memory result = new uint[](resultLength);
+        for (uint i = 0; i < maticOpts.length; i++)
+        {
+            if(
+                !(exclude_expired && maticOpts[i].expiry > block.timestamp)
+                && !(exclude_canceled && maticOpts[i].canceled)
+                && !(exclude_exercised && maticOpts[i].canceled)
+            )
+            {
+                result[i] = i;
+            }
+        }
+        return result;
     }
 }

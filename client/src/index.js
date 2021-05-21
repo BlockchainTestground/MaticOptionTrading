@@ -17,7 +17,6 @@ function getOptionHtml(option) {
   result += "<p>Writer: " + option.writer.substring(0, 7) +"</p>"
   result += "<p>Exercised: " + option.exercised +"</p>"
   result += "<p>Expiry: " + convertToDateString(option.expiry) +"</p>"
-  result += "<p>Latest Cost: " + convertWeiToCrypto(option.latestCost) +"</p>"
   result += "<button class='button is-small is-primary is-outlined' onclick='updateExerciseCost(" +
               option.id +
             ")'>Update exercise cost</button>"
@@ -45,52 +44,68 @@ function getOptionHtml(option) {
   return result;
 }
 
-const displayMyOptions = async (options_length) => {
+const displayMyOptions = async () => {
   var result = ""
-  var option_count = 0;
-  for (var i = 0; i < options_length; i++) {
+  options = await contract.methods
+    .getMaticOptsByAddress(
+      accounts[0] /*address*/,
+      true /*include_if_writer*/,
+      false /*include_if_buyer*/,
+      false /*exclude_expired*/,
+      false /*exclude_canceled*/,
+      false /*exclude_exercised*/,
+      false /*exclude_bought*/
+    ).call()
+  if(options.length == 0)
+  {
+    return "<p>You have no written options. Try writing a new one.</p>"
+  }
+  for (var i = 0; i < options.length; i++) {
     option = await contract.methods.maticOpts(i).call()
-    if (option.writer == accounts[0] && !option.canceled) {
-      result += getOptionHtml(option)
-      option_count += 1
-      //if (option_count > 5) break
-    }
+    result += getOptionHtml(option)
   }
   return result
 };
 
-const displayOthersOptions = async (options_length) => {
+const displayOthersOptions = async () => {
   var result = ""
-  var option_count = 0;
-  console.log("Total: "+option_count)
-  for (var i = 0; i < options_length; i++) {
+  options = await contract.methods
+    .getMaticOpts(
+      true /*exclude_expired*/,
+      true /*exclude_canceled*/,
+      true /*exclude_exercised*/,
+      true /*exclude_bought*/
+    ).call()
+  if(options.length == 0)
+  {
+    return "<p>Could now find any options. Try writing one.</p>"
+  }
+  for (var i = 0; i < options.length; i++) {
     option = await contract.methods.maticOpts(i).call()
-    if (
-      true
-      //option.writer != accounts[0] &&
-      //option.buyer != accounts[0] &&
-      //!option.canceled
-    ) {
-      console.log(i)
-      console.log(option)
-      result += getOptionHtml(option)
-      option_count += 1
-      //if (option_count > 5) break
-    }
+    result += getOptionHtml(option)
   }
   return result
 };
 
-const displayOptionsIBought = async (options_length) => {
+const displayOptionsIBought = async () => {
   var result = ""
-  var option_count = 0;
-  for (var i = 0; i < options_length; i++) {
+  options = await contract.methods
+    .getMaticOptsByAddress(
+      accounts[0] /*address*/,
+      false /*include_if_writer*/,
+      true /*include_if_buyer*/,
+      false /*exclude_expired*/,
+      false /*exclude_canceled*/,
+      false /*exclude_exercised*/,
+      false /*exclude_bought*/
+    ).call()
+  if(options.length == 0)
+  {
+    return "<p>You haven't bought any options. Try buying one on the explore tab.</p>"
+  }
+  for (var i = 0; i < options.length; i++) {
     option = await contract.methods.maticOpts(i).call()
-    if (option.buyer == accounts[0] && !option.canceled) {
-      result += getOptionHtml(option)
-      option_count += 1
-      //if (option_count > 5) break
-    }
+    result += getOptionHtml(option)
   }
   return result
 };
@@ -110,9 +125,7 @@ function onExploreClick()
   document.getElementById("main-content-title").innerHTML = "Explore"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
-    var options_length = await contract.methods.getMaticOptsLength().call();
-    console.log(options_length)
-    var options_html = await displayOthersOptions(options_length)
+    var options_html = await displayOthersOptions()
     document.getElementById("main-content").innerHTML = options_html;
   }
   awaitOptions()
@@ -123,8 +136,7 @@ function onYourOptionsClick()
   document.getElementById("main-content-title").innerHTML = "Your Options"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
-    var options_length = await contract.methods.getMaticOptsLength().call();
-    var options_html = await displayMyOptions(options_length)
+    var options_html = await displayMyOptions()
     document.getElementById("main-content").innerHTML = options_html;
   }
   awaitOptions()
@@ -135,8 +147,7 @@ function onOptionsYouBoughtClick()
   document.getElementById("main-content-title").innerHTML = "Options You Bought"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
-    var options_length = await contract.methods.getMaticOptsLength().call();
-    var options_html = await displayOptionsIBought(options_length)
+    var options_html = await displayOptionsIBought()
     document.getElementById("main-content").innerHTML = options_html;
   }
   awaitOptions()
@@ -240,6 +251,12 @@ const writeOption = (contract, accounts) => {
     e.preventDefault();
     var secondsSinceEpoch = Math.round(Date.now() / 1000);
     var expiry = secondsSinceEpoch + expiry_days * 86400;
+    console.log(strike)
+    console.log(premium)
+    console.log(tknAmt)
+    console.log(convertCryptoToWei(strike))
+    console.log(convertCryptoToWei(premium))
+    console.log(convertCryptoToWei(tknAmt))
     await contract.methods
       .writeOption(
         convertCryptoToWei(strike),
@@ -253,9 +270,6 @@ const writeOption = (contract, accounts) => {
         gas: 400000,
         value: convertCryptoToWei(tknAmt),
       });
-    displayOptions(contract).catch((revertReason) => {
-      getRevertReason(revertReason.receipt.transactionHash);
-    });
   });
 };
 
@@ -282,7 +296,8 @@ function getMaticPrice() {
       if (err !== null) {
         alert("Something went wrong: " + err);
       } else {
-        matic_price = data["price"];
+        matic_price = data["price"]
+        strike = matic_price
       }
     }
   );
