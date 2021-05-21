@@ -80,10 +80,15 @@ const displayOthersOptions = async () => {
   {
     return "<p>Could now find any options. Try writing one.</p>"
   }
-  for (var i = 0; i < options.length; i++) {
-    option = await contract.methods.maticOpts(i).call()
-    result += getOptionHtml(option)
-  }
+  // for (var i = 0; i < options.length; i++) {
+  //   option = await contract.methods.maticOpts(i).call()
+  //   result += getOptionHtml(option)
+  // }
+  const rows_per_page  = 3;
+  let current_page = 2;
+
+  const list_element = document.getElementById('list');
+  displayList (options, list_element, rows_per_page, current_page); 
   return result
 };
 
@@ -120,20 +125,63 @@ function onWriteClick()
   });
 }
 
+function displayList (items, wrapper, rows_per_page, page) {
+  wrapper.innerHTML = "";
+  page--;
+
+  let start = rows_per_page * page;
+  let end = start + rows_per_page;
+  let paginatedItems = items.slice(start, end);
+  //console.log("items-paginated",paginatedItems);
+  for ( let i = 0; i < paginatedItems.length; i++) {
+    let item = paginatedItems[i];
+    let item_element = document.createElement(('div'));
+    item_element.classList.add('item');
+    item_element.innerText = item;
+    wrapper.appendChild(item_element);
+  }
+
+}
+
+function SetupPagination (items, wrapper, rows_per_page) {
+  wrapper.innerHTML = "";
+  let page_count = Math.ceil(items.length/rows_per_page);
+  for(let i =1; i <page_count + 1; i ++) {
+    PaginationButton(i);
+    let btn = PaginationButton(i);
+    wrapper.appendChild(btn);
+  }
+}
+
+function PaginationButton(page) {
+  let button = document.createElement('button');
+  button.innerText = page;
+
+  if(current_page == page) button.classList.add('active');
+
+  return button;
+}
+
 function onExploreClick()
 {
+  var options_html;
   document.getElementById("main-content-title").innerHTML = "Explore"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
     var options_html = await displayOthersOptions()
     document.getElementById("main-content").innerHTML = options_html;
   }
+  const list_element = document.getElementById('list');
+  let current_page = 1;
+  let rows = 5;
+  displayList([1,2,3], list_element, rows, current_page);
   awaitOptions()
+  
 }
 
 function onYourOptionsClick()
 {
-  document.getElementById("main-content-title").innerHTML = "Your Options"
+  document.getElementById("main-c`ontent-title").innerHTML = "Your Options"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
     var options_html = await displayMyOptions()
