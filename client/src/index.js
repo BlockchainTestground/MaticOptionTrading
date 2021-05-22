@@ -132,7 +132,7 @@ async function displayList (items, rows_per_page, page, result) {
   for ( let i = 0; i < paginatedItems.length; i++) {
     let item_element = document.createElement(('div'));
     item_element.classList.add('item');
-    option = await contract.methods.maticOpts(i).call();
+    option = await contract.methods.maticOpts(paginatedItems[i]).call();
     result += getOptionHtml(option);
   }
   document.getElementById("main-content").innerHTML = result
