@@ -110,6 +110,7 @@ const displayOptionsIBought = async () => {
 
 function onSellOptionClick()
 {
+  setupPagination([], pagination_element, rows_per_page);
   document.getElementById("main-content-title").innerHTML = "Sell Option"
   document.getElementById("main-content").innerHTML = ""
   $("#main-content").load("html/write_option_form.html", function(){
