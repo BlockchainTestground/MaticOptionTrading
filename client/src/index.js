@@ -411,10 +411,10 @@ async function optionTradesApp() {
     });
   };
   awaitWeb3();
-  $("#footer").load("html/footer.html", function(){
-  });
-  $("#navbar").load("html/navbar.html", function(){
-  });
 }
 
-optionTradesApp()
+$("#footer").load("html/footer.html", function(){
+});
+$("#navbar").load("html/navbar.html", function(){
+  optionTradesApp()
+});
