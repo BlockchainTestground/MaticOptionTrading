@@ -1,11 +1,15 @@
-const getWeb3 = () => {
+const getWeb3 = async () => {
   return new Promise((resolve, reject) => {
-    window.addEventListener("load", async () => {
+    console.log(document.readyState)
+    if(document.readyState=="complete")
+    {
       if (window.ethereum) {
         const web3 = new Web3(window.ethereum);
         try {
           // ask user permission to access his accounts
-          await window.ethereum.request({ method: "eth_requestAccounts" });
+          (async function(){
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+          })()
           resolve(web3);
         } catch (error) {
           reject(error);
@@ -13,7 +17,23 @@ const getWeb3 = () => {
       } else {
         reject("must install MetaMask");
       }
-    });
+    }else
+    {
+      window.addEventListener("load", async () => {
+        if (window.ethereum) {
+          const web3 = new Web3(window.ethereum);
+          try {
+            // ask user permission to access his accounts
+            await window.ethereum.request({ method: "eth_requestAccounts" });
+            resolve(web3);
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          reject("must install MetaMask");
+        }
+      });
+    }
   });
 };
 
