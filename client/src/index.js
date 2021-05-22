@@ -131,7 +131,7 @@ async function displayList (items, rows_per_page, page, result) {
   for ( let i = 0; i < paginatedItems.length; i++) {
     let item_element = document.createElement(('div'));
     item_element.classList.add('item');
-    option = await contract.methods.maticOpts(i).call();
+    option = await contract.methods.maticOpts(paginatedItems[i]).call();
     result += getOptionHtml(option);
   }
   document.getElementById("main-content").innerHTML = result
@@ -176,10 +176,7 @@ function onBuyClick()
     var options_html = await displayOthersOptions()
     document.getElementById("main-content").innerHTML = options_html;
   }
-  const list_element = document.getElementById('list');
-  let current_page = 1;
-  let rows = 5;
-  displayList([1,2,3], list_element, rows, current_page);
+  // displayList([1,2,3], list_element, rows, current_page);
   awaitOptions()
   
   document.getElementById("sell-button").classList.remove("is-active");
