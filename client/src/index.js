@@ -31,7 +31,7 @@ function getOptionHtml(option, exercise_cost) {
     option.premium
   })' style='display:${showBuy(option)}'>Buy</button>`;
   result += `<button class='button is-small is-danger is-outlined' onclick='exerciseOption(${option.id},${
-    option.latestCost
+    exercise_cost
   })' style='display:${showExcercise(option, accounts)}'>Exercise</button>`;
   result += `<button class='button is-small is-danger is-outlined' onclick='retrieveExpiredFunds(${
     option.id
@@ -259,7 +259,7 @@ let strike = 0;
 let premium = 5;
 let expiry_days = 1;
 let tknAmt = 100;
-let optionType = "PUT";
+let optionType = "CALL";
 
 function updateSummary() {
   big_strike = new Big(strike);
