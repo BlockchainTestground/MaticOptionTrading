@@ -23,6 +23,9 @@ function getOptionHtml(option, exercise_cost) {
   result += "<p>Expiry: " + convertToDateString(option.expiry) +"</p>"
   result += "<p>Premium: " + convertWeiToCrypto(option.premium) +"</p>"
   result += "<p>Strike: " + convertWeiToCrypto(option.strike) +"</p>"
+  
+  if(option.exercised)
+    result += "<p>This option has been exercised</p>"
 
   result += `<button class='button is-small is-danger is-outlined' onclick='cancelOption(${
     option.id
