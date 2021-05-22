@@ -58,7 +58,7 @@ module.exports = {
       network_id: 137,
       confirmations: 2,
       timeoutBlocks: 200,
-      skipDryRun: true
+      skipDryRun: false
     },
     // development: {
     //  host: "127.0.0.1",     // Localhost (default: none)
