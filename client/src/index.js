@@ -15,8 +15,6 @@ function getOptionHtml(option) {
     result += "<h4 id='const' class='title is-3'>CALL</h4>"
   }
 
-  console.log(option.expiry)
-
   result += "<article class='message is-primary'>"
   result += "<p>Amount: " + convertWeiToCrypto(option.amount) +"</p>"
   result += "<p>Buyer: " + option.buyer.substring(0, 7) +"</p>"
