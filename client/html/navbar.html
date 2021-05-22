@@ -1,0 +1,38 @@
+<!-- Main container -->
+<nav class="level">
+  <!-- Left side -->
+  <div class="level-left">
+    <div class="level-item">
+      <p class="subtitle is-5">
+        <a onclick="onMyOptionsClick()" class="is-active"><i class="fas fa-user"></i>My options</a>
+      </p>
+    </div>
+    <div class="level-item">
+      <p class="subtitle is-5">
+        <a onclick="onOptionsIBoughtClick()" class="is-active"><i class="fas fa-receipt"></i> Option I bought</a>
+      </p>
+    </div>
+    <div class="level-item">
+      <p class="subtitle is-5">
+        <a onclick="disconnectWallet()" class="is-active"><i class="fas fa-wallet"></i> Logout</a>
+      </p>
+    </div>
+  </div>
+  <!-- Right side -->
+  <div class="level-right">
+    <div id="wallet-connected" style="display: none">
+      <p id="my-balance" class="level-item"></p>
+      <p id="my-address" class="level-item"></p>
+    </div>
+    <div id="wallet-disconnected" style="display: none">
+      <p id="my-balance" class="level-item">
+        <a id="connect-button" class="button is-primary" onclick="connectWallet()">
+          <span class="icon">
+            <i class="fas fa-wallet"></i>
+          </span>
+          <span>Connect Wallet</span>
+        </a>
+      </p>
+    </div>
+  </div>
+</nav>

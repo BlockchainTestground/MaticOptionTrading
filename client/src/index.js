@@ -1,5 +1,6 @@
 var contract;
 var accounts;
+var balance;
 var web3;
 var matic_price;
 
@@ -115,7 +116,7 @@ const displayOptionsIBought = async () => {
   return result
 };
 
-function onWriteClick()
+function onSellOptionClick()
 {
   document.getElementById("main-content-title").innerHTML = "Write an Option"
   document.getElementById("main-content").innerHTML = ""
@@ -162,7 +163,7 @@ function PaginationButton(page) {
   return button;
 }
 
-function onExploreClick()
+function onBuyClick()
 {
   var options_html;
   document.getElementById("main-content-title").innerHTML = "Explore"
@@ -179,9 +180,9 @@ function onExploreClick()
   
 }
 
-function onYourOptionsClick()
+function onMyOptionsClick()
 {
-  document.getElementById("main-c`ontent-title").innerHTML = "Your Options"
+  document.getElementById("main-content-title").innerHTML = "My Options"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
     var options_html = await displayMyOptions()
@@ -190,9 +191,9 @@ function onYourOptionsClick()
   awaitOptions()
 }
 
-function onOptionsYouBoughtClick()
+function onOptionsIBoughtClick()
 {
-  document.getElementById("main-content-title").innerHTML = "Options You Bought"
+  document.getElementById("main-content-title").innerHTML = "Options I Bought"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
     var options_html = await displayOptionsIBought()
@@ -317,17 +318,30 @@ const writeOption = (contract, accounts) => {
 
 function connectWallet() {
   var awaitAccounts = async function () {
-    accounts = await web3.eth.getAccounts();
-    document.getElementById("my-address").innerHTML = accounts[0];
-    document.getElementById("wallet-disconnected").style.display = "none";
-    document.getElementById("wallet-connected").style.display = "block";
+    getAccounts()
   };
   awaitAccounts();
 }
 
+async function getBalance() {
+  balance_temp = await web3.eth.getBalance(accounts[0])
+  balance = convertWeiToCrypto(balance_temp)
+  document.getElementById("my-balance").innerHTML = balance + " MATIC"
+}
+
+async function getAccounts() {
+  accounts = await web3.eth.getAccounts()
+  document.getElementById("my-address").innerHTML = accounts[0]
+  document.getElementById("wallet-disconnected").style.display = "none"
+  document.getElementById("wallet-connected").style.display = "block"
+  getBalance()
+}
+
 function disconnectWallet() {
-  accounts = null;
+  accounts = null
+  balance = null
   document.getElementById("wallet-disconnected").style.display = "block";
+  document.getElementById("wallet-connected").style.display = "none";
   document.getElementById("wallet-connected").style.display = "none";
 }
 
@@ -348,6 +362,8 @@ function getMaticPrice() {
 async function optionTradesApp() {
   $("#footer").load("html/footer.html", function(){
   });
+  $("#navbar").load("html/navbar.html", function(){
+  });
   getMaticPrice();
   var awaitWeb3 = async function () {
     web3 = await getWeb3();
@@ -357,13 +373,9 @@ async function optionTradesApp() {
         var awaitContract = async function () {
           contract = await getContract(web3);
           var awaitAccounts = async function () {
-            accounts = await web3.eth.getAccounts();
+            getAccounts()
             writeOption(contract, accounts);
-            onWriteClick()
-            document.getElementById("my-address").innerHTML = accounts[0];
-            document.getElementById("wallet-disconnected").style.display =
-              "none";
-            document.getElementById("wallet-connected").style.display = "block";
+            onSellOptionClick()
           };
           awaitAccounts();
         };
