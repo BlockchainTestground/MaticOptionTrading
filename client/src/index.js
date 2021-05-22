@@ -113,6 +113,9 @@ function onSellOptionClick()
   $("#main-content").load("html/write_option_form.html", function(){
     $("#strike").val(matic_price)
     writeOption(contract, accounts)
+    updateSummary()
+    document.getElementById("tknAmt").value = tknAmt
+    document.getElementById("premium").value = premium
   });
   document.getElementById("buy-button").classList.remove("is-active");
   document.getElementById("sell-button").classList.add("is-active");
@@ -253,27 +256,27 @@ const updateExerciseCost = async (option_id) => {
 };
 
 let strike = 0;
-let premium = 0;
+let premium = 5;
 let expiry_days = 1;
-let tknAmt = 0;
+let tknAmt = 100;
 let optionType = "PUT";
 
 function updateSummary() {
   big_strike = new Big(strike);
   big_tknAmt = new Big(tknAmt);
+  big_premium = new Big(premium);
   if (optionType == "CALL")
     big_cost_plus_premium = big_strike.mul(big_tknAmt).plus(premium);
   else big_cost_plus_premium = big_strike.mul(big_tknAmt).minus(premium);
   big_break_even = big_cost_plus_premium.div(tknAmt);
+  document.getElementById("summary_amount").innerHTML =
+    "Matic: " + big_tknAmt;
   document.getElementById("summary_strike").innerHTML =
-    "Strike Price: " + strike;
-  document.getElementById("summary_cost").innerHTML =
-    "Cost: " + big_strike.mul(big_tknAmt);
-  document.getElementById("summary_premium").innerHTML = "Premium: " + premium;
-  document.getElementById("cost_plus_premium").innerHTML =
-    "Cost plus premium: " + big_cost_plus_premium;
+    "Strike Price: " + big_strike;
+  document.getElementById("summary_premium").innerHTML =
+    "Premium: " + big_premium;
   document.getElementById("summary_break_even").innerHTML =
-    "Break even: $" + big_break_even;
+    "Break even: " + big_break_even;
 }
 
 const writeOption = (contract, accounts) => {
@@ -414,4 +417,4 @@ async function optionTradesApp() {
   awaitWeb3();
 }
 
-optionTradesApp();
+optionTradesApp()
