@@ -394,7 +394,7 @@ async function optionTradesApp() {
   var awaitWeb3 = async function () {
     web3 = await getWeb3();
     web3.eth.net.getId((err, netId) => {
-      if (netId == 80001) {
+      if (netId == 137) {
         document.getElementById("loading-web3").style.display = "none";
         var awaitContract = async function () {
           contract = await getContract(web3);
