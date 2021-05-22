@@ -18,15 +18,9 @@
       <div class="columns">
         <div class="column is-12">
           <div class="container content">
-            <div id="wrong-network" style="display: none">
-              <i class="fas fa-exclamation-triangle"></i><p>Wrong network, please connect to mumbai testnet</p>
-            </div>
             <figure class="image container">
               <img src="/img/logo.png">
             </figure>
-            <div id="loading-web3">
-              <p>Loading web3...</p>
-            </div>
             <h1 class="title has-text-centered">Buy and sell options</h1>
             <h3 class="subtitle has-text-centered">
               + Matic's ultra low gas fees
@@ -45,8 +39,8 @@
           menu
         </p>
         <ul class="menu-list">
-          <li class="is-right"><a onclick="onSellOptionClick()" class="is-active"><i class="fas fa-tags"></i> Sell option</a></li>
-          <li><a onclick="onBuyClick()" class="is-active"><i class="fas fa-shopping-cart"></i> Buy option</a></li>
+          <li><a id="buy-button" onclick="onBuyClick()" class="is-active"><i class="fas fa-shopping-cart"></i> Buy option</a></li>
+          <li><a id="sell-button" onclick="onSellOptionClick()" class=""><i class="fas fa-tags"></i> Sell option</a></li>
         </ul>
           </aside>
         </div>

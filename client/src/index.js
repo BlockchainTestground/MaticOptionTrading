@@ -101,7 +101,7 @@ const displayOptionsIBought = async () => {
     ).call()
   if(options.length == 0)
   {
-    return "<p>You haven't bought any options. Try buying one on the explore tab.</p>"
+    return "<p>You haven't bought any options. Try buying one.</p>"
   }
   displayList(options, rows_per_page, current_page, result); 
   setupPagination(options, pagination_element, rows_per_page);
@@ -116,6 +116,8 @@ function onSellOptionClick()
     $("#strike").val(matic_price)
     writeOption(contract, accounts)
   });
+  document.getElementById("buy-button").classList.remove("is-active");
+  document.getElementById("sell-button").classList.add("is-active");
 }
 
 async function displayList (items, rows_per_page, page, result) {
@@ -168,7 +170,7 @@ function paginationButton(page, items) {
 function onBuyClick()
 {
   var options_html;
-  document.getElementById("main-content-title").innerHTML = "Explore"
+  document.getElementById("main-content-title").innerHTML = "Buy Option"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
     var options_html = await displayOthersOptions()
@@ -180,6 +182,8 @@ function onBuyClick()
   displayList([1,2,3], list_element, rows, current_page);
   awaitOptions()
   
+  document.getElementById("sell-button").classList.remove("is-active");
+  document.getElementById("buy-button").classList.add("is-active");
 }
 
 function onMyOptionsClick()
@@ -377,7 +381,7 @@ async function optionTradesApp() {
           var awaitAccounts = async function () {
             getAccounts()
             writeOption(contract, accounts);
-            onSellOptionClick()
+            onBuyClick()
           };
           awaitAccounts();
         };

@@ -4,17 +4,17 @@
   <div class="level-left">
     <div class="level-item">
       <p class="subtitle is-5">
-        <a onclick="onMyOptionsClick()" class="is-active"><i class="fas fa-user"></i>My options</a>
+        <a onclick="onMyOptionsClick()"><i class="fas fa-user"></i>My options</a>
       </p>
     </div>
     <div class="level-item">
       <p class="subtitle is-5">
-        <a onclick="onOptionsIBoughtClick()" class="is-active"><i class="fas fa-receipt"></i> Option I bought</a>
+        <a onclick="onOptionsIBoughtClick()"><i class="fas fa-receipt"></i> Option I bought</a>
       </p>
     </div>
     <div class="level-item">
-      <p class="subtitle is-5">
-        <a onclick="disconnectWallet()" class="is-active"><i class="fas fa-wallet"></i> Logout</a>
+      <p class="subtitle is-5" style="display: none">
+        <a onclick="disconnectWallet()"><i class="fas fa-wallet"></i> Logout</a>
       </p>
     </div>
   </div>
@@ -23,6 +23,12 @@
     <div id="wallet-connected" style="display: none">
       <p id="my-balance" class="level-item"></p>
       <p id="my-address" class="level-item"></p>
+    </div>
+    <div id="loading-web3">
+      <p>Loading web3...</p>
+    </div>
+    <div id="wrong-network" style="display: none">
+      <p><i class="fas fa-exclamation-triangle"></i> Wrong network, please connect to mumbai testnet</p>
     </div>
     <div id="wallet-disconnected" style="display: none">
       <p id="my-balance" class="level-item">
