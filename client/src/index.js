@@ -7,7 +7,7 @@ var rows_per_page  = 3;
 var current_page = 1;
 const pagination_element = document.getElementById('pagination');
 
-function getOptionHtml(option) {
+function getOptionHtml(option, exercise_cost) {
   var result = "<div class='box'>"
   if (option.optionType == 0) {
     result += "<h4 id='const' class='title is-3'>PUT</h4>"
@@ -19,11 +19,8 @@ function getOptionHtml(option) {
   result += "<p>Amount: " + convertWeiToCrypto(option.amount) +"</p>"
   result += "<p>Buyer: " + option.buyer.substring(0, 7) +"</p>"
   result += "<p>Writer: " + option.writer.substring(0, 7) +"</p>"
-  result += "<p>Exercised: " + option.exercised +"</p>"
+  result += "<p>Exercise cost: " + convertWeiToCrypto(exercise_cost) +"</p>"
   result += "<p>Expiry: " + convertToDateString(option.expiry) +"</p>"
-  result += "<button class='button is-small is-primary is-outlined' onclick='updateExerciseCost(" +
-              option.id +
-            ")'>Update exercise cost</button>"
   result += "<p>Premium: " + convertWeiToCrypto(option.premium) +"</p>"
   result += "<p>Strike: " + convertWeiToCrypto(option.strike) +"</p>"
 
@@ -133,7 +130,8 @@ async function displayList (items, rows_per_page, page, result) {
     let item_element = document.createElement(('div'));
     item_element.classList.add('item');
     option = await contract.methods.maticOpts(paginatedItems[i]).call();
-    result += getOptionHtml(option);
+    exercise_cost = await contract.methods.getExerciseCost(paginatedItems[i]).call();
+    result += getOptionHtml(option, exercise_cost);
   }
   document.getElementById("main-content").innerHTML = result
 
