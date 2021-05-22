@@ -3,8 +3,8 @@ var accounts;
 var balance;
 var web3;
 var matic_price;
-const rows_per_page  = 3;
-let current_page = 1;
+var rows_per_page  = 3;
+var current_page = 1;
 const pagination_element = document.getElementById('pagination');
 
 function getOptionHtml(option) {
@@ -64,10 +64,8 @@ const displayMyOptions = async () => {
   {
     return "<p>You have no written options. Try writing a new one.</p>"
   }
-  for (var i = 0; i < options.length; i++) {
-    option = await contract.methods.maticOpts(i).call()
-    result += getOptionHtml(option)
-  }
+  displayList(options, rows_per_page, current_page, result); 
+  setupPagination(options, pagination_element, rows_per_page);
   return result
 };
 
@@ -105,10 +103,8 @@ const displayOptionsIBought = async () => {
   {
     return "<p>You haven't bought any options. Try buying one on the explore tab.</p>"
   }
-  for (var i = 0; i < options.length; i++) {
-    option = await contract.methods.maticOpts(i).call()
-    result += getOptionHtml(option)
-  }
+  displayList(options, rows_per_page, current_page, result); 
+  setupPagination(options, pagination_element, rows_per_page);
   return result
 };
 
