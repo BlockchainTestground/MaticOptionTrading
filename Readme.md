@@ -1,5 +1,3 @@
-Option Trading on Matic.
-
 ## Dependencies
 
 ```bash
