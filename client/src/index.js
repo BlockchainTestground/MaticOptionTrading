@@ -15,6 +15,8 @@ function getOptionHtml(option) {
     result += "<h4 id='const' class='title is-3'>CALL</h4>"
   }
 
+  console.log(option.expiry)
+
   result += "<article class='message is-primary'>"
   result += "<p>Amount: " + convertWeiToCrypto(option.amount) +"</p>"
   result += "<p>Buyer: " + option.buyer.substring(0, 7) +"</p>"
@@ -110,7 +112,6 @@ const displayOptionsIBought = async () => {
 
 function onSellOptionClick()
 {
-  setupPagination([], pagination_element, rows_per_page);
   document.getElementById("main-content-title").innerHTML = "Sell Option"
   document.getElementById("main-content").innerHTML = ""
   $("#main-content").load("html/write_option_form.html", function(){
@@ -256,7 +257,7 @@ const updateExerciseCost = async (option_id) => {
 
 let strike = 0;
 let premium = 0;
-let expiry_days = 0;
+let expiry_days = 1;
 let tknAmt = 0;
 let optionType = "PUT";
 
