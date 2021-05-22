@@ -251,12 +251,6 @@ const writeOption = (contract, accounts) => {
     e.preventDefault();
     var secondsSinceEpoch = Math.round(Date.now() / 1000);
     var expiry = secondsSinceEpoch + expiry_days * 86400;
-    console.log(strike)
-    console.log(premium)
-    console.log(tknAmt)
-    console.log(convertCryptoToWei(strike))
-    console.log(convertCryptoToWei(premium))
-    console.log(convertCryptoToWei(tknAmt))
     await contract.methods
       .writeOption(
         convertCryptoToWei(strike),
