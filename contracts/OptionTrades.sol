@@ -120,7 +120,7 @@ contract OptionTrades {
         //Equivalent MATIC value using Chainlink feed
         uint equivMatic = exerciseVal / (maticPrice * 10**10); //move decimal 10 places right to account for 8 places of pricefeed
         //Buyer exercises option by paying strike*amount equivalent MATIC value
-        require(msg.value == equivMatic, "Incorrect LINK amount sent to exercise");
+        require(msg.value == equivMatic, "Incorrect MATIC amount sent to exercise");
         if(maticOpts[ID].optionType == OptionType.CALL)
         {
             //Pay writer the exercise cost
