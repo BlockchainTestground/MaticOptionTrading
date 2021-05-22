@@ -2,18 +2,18 @@
 <nav class="level">
   <!-- Left side -->
   <div class="level-left">
-    <div class="level-item">
+    <div id="my-option-button" class="level-item" style="display: none">
       <p class="subtitle is-5">
-        <a onclick="onMyOptionsClick()"><i class="fas fa-user"></i>My options</a>
+        <a onclick="onMyOptionsClick()"><i class="fas fa-user"></i> My options</a>
       </p>
     </div>
-    <div class="level-item">
+    <div id="options-i-bought-button" class="level-item" style="display: none">
       <p class="subtitle is-5">
         <a onclick="onOptionsIBoughtClick()"><i class="fas fa-receipt"></i> Option I bought</a>
       </p>
     </div>
-    <div class="level-item">
-      <p class="subtitle is-5" style="display: none">
+    <div id="logout-button" class="level-item" style="display: none">
+      <p class="subtitle is-5">
         <a onclick="disconnectWallet()"><i class="fas fa-wallet"></i> Logout</a>
       </p>
     </div>
@@ -32,11 +32,11 @@
     </div>
     <div id="wallet-disconnected" style="display: none">
       <p id="my-balance" class="level-item">
-        <a id="connect-button" class="button is-primary" onclick="connectWallet()">
+        <a id="connect-button" class="button is-primary is-outlined" onclick="connectWallet()">
           <span class="icon">
             <i class="fas fa-wallet"></i>
           </span>
-          <span>Connect Wallet</span>
+          <span>Connect</span>
         </a>
       </p>
     </div>
