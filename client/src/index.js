@@ -111,7 +111,7 @@ const displayOptionsIBought = async () => {
 function onSellOptionClick()
 {
   setupPagination([], pagination_element, rows_per_page);
-  document.getElementById("main-content-title").innerHTML = "Write an Option"
+  document.getElementById("main-content-title").innerHTML = "Sell Option"
   document.getElementById("main-content").innerHTML = ""
   $("#main-content").load("html/write_option_form.html", function(){
     $("#strike").val(matic_price)
@@ -340,18 +340,35 @@ async function getBalance() {
 
 async function getAccounts() {
   accounts = await web3.eth.getAccounts()
-  document.getElementById("my-address").innerHTML = accounts[0]
-  document.getElementById("wallet-disconnected").style.display = "none"
-  document.getElementById("wallet-connected").style.display = "block"
+  onConnect()
   getBalance()
 }
 
 function disconnectWallet() {
   accounts = null
   balance = null
-  document.getElementById("wallet-disconnected").style.display = "block";
-  document.getElementById("wallet-connected").style.display = "none";
-  document.getElementById("wallet-connected").style.display = "none";
+  onDisconnect()
+}
+
+function onConnect()
+{
+  document.getElementById("my-address").innerHTML = accounts[0]
+  document.getElementById("wallet-disconnected").style.display = "none"
+  document.getElementById("wallet-connected").style.display = "block"
+
+  document.getElementById("my-option-button").style.display = "block"
+  document.getElementById("options-i-bought-button").style.display = "block"
+  document.getElementById("logout-button").style.display = "block"
+}
+
+function onDisconnect() {
+  document.getElementById("wallet-disconnected").style.display = "block"
+  document.getElementById("wallet-connected").style.display = "none"
+  document.getElementById("wallet-connected").style.display = "none"
+
+  document.getElementById("my-option-button").style.display = "none"
+  document.getElementById("options-i-bought-button").style.display = "none"
+  document.getElementById("logout-button").style.display = "none"
 }
 
 function getMaticPrice() {
