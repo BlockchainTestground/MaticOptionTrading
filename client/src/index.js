@@ -2,6 +2,9 @@ var contract;
 var accounts;
 var web3;
 var matic_price;
+const rows_per_page  = 3;
+let current_page = 1;
+const pagination_element = document.getElementById('pagination');
 
 function getOptionHtml(option) {
   var result = "<div class='box'>"
@@ -80,15 +83,8 @@ const displayOthersOptions = async () => {
   {
     return "<p>Could now find any options. Try writing one.</p>"
   }
-  // for (var i = 0; i < options.length; i++) {
-  //   option = await contract.methods.maticOpts(i).call()
-  //   result += getOptionHtml(option)
-  // }
-  const rows_per_page  = 3;
-  let current_page = 2;
-
-  const list_element = document.getElementById('list');
-  displayList (options, list_element, rows_per_page, current_page); 
+  displayList(options, rows_per_page, current_page, result); 
+  setupPagination(options, pagination_element, rows_per_page);
   return result
 };
 
@@ -125,39 +121,49 @@ function onWriteClick()
   });
 }
 
-function displayList (items, wrapper, rows_per_page, page) {
-  wrapper.innerHTML = "";
+async function displayList (items, rows_per_page, page, result) {
+  result = "";
   page--;
 
   let start = rows_per_page * page;
   let end = start + rows_per_page;
   let paginatedItems = items.slice(start, end);
-  //console.log("items-paginated",paginatedItems);
+
   for ( let i = 0; i < paginatedItems.length; i++) {
-    let item = paginatedItems[i];
     let item_element = document.createElement(('div'));
     item_element.classList.add('item');
-    item_element.innerText = item;
-    wrapper.appendChild(item_element);
+    option = await contract.methods.maticOpts(i).call();
+    result += getOptionHtml(option);
   }
+  document.getElementById("main-content").innerHTML = result
 
 }
 
-function SetupPagination (items, wrapper, rows_per_page) {
+function setupPagination (items, wrapper, rows_per_page) {
   wrapper.innerHTML = "";
   let page_count = Math.ceil(items.length/rows_per_page);
   for(let i =1; i <page_count + 1; i ++) {
-    PaginationButton(i);
-    let btn = PaginationButton(i);
+    paginationButton(i);
+    let btn = paginationButton(i,items);
     wrapper.appendChild(btn);
   }
 }
 
-function PaginationButton(page) {
+function paginationButton(page, items) {
   let button = document.createElement('button');
   button.innerText = page;
 
   if(current_page == page) button.classList.add('active');
+
+  button.addEventListener('click', function(){
+    current_page = page;
+    displayList(items, rows_per_page, current_page);
+
+    let current_btn = document.querySelector('.pagenumbers button.active');
+    current_btn.classList.remove('active');;
+
+    button.classList.add('active');
+  })
 
   return button;
 }
