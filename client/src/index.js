@@ -73,10 +73,10 @@ const displayOthersOptions = async () => {
   var result = ""
   options = await contract.methods
     .getMaticOpts(
-      true /*exclude_expired*/,
-      true /*exclude_canceled*/,
-      true /*exclude_exercised*/,
-      true /*exclude_bought*/
+      false /*exclude_expired*/,
+      false /*exclude_canceled*/,
+      false /*exclude_exercised*/,
+      false /*exclude_bought*/
     ).call()
   setupPagination(options, pagination_element, rows_per_page);
   if(options.length == 0)
