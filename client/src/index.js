@@ -17,8 +17,8 @@ function getOptionHtml(option, exercise_cost) {
 
   result += "<article class='message is-primary'>"
   result += "<p>Amount: " + convertWeiToCrypto(option.amount) +"</p>"
-  result += "<p>Buyer: " + option.buyer.substring(0, 7) +"</p>"
-  result += "<p>Writer: " + option.writer.substring(0, 7) +"</p>"
+  result += "<p>Buyer: " + option.buyer.substring(0, 6) + "..." + option.buyer.substring(option.buyer.length-4, option.buyer.length) +"</p>"
+  result += "<p>Writer: " + option.writer.substring(0, 6) + "..." + option.writer.substring(option.writer.length-4, option.writer.length) +"</p>"
   result += "<p>Exercise cost: " + convertWeiToCrypto(exercise_cost) +"</p>"
   result += "<p>Expiry: " + convertToDateString(option.expiry) +"</p>"
   result += "<p>Premium: " + convertWeiToCrypto(option.premium) +"</p>"
@@ -335,7 +335,7 @@ function connectWallet() {
 async function getBalance() {
   balance_temp = await web3.eth.getBalance(accounts[0])
   balance = convertWeiToCrypto(balance_temp)
-  document.getElementById("my-balance").innerHTML = balance + " MATIC"
+  document.getElementById("my-balance").innerHTML = parseFloat(balance).toFixed(4) + " MATIC"
 }
 
 async function getAccounts() {
@@ -352,7 +352,7 @@ function disconnectWallet() {
 
 function onConnect()
 {
-  document.getElementById("my-address").innerHTML = accounts[0]
+  document.getElementById("my-address").innerHTML = accounts[0].substring(0, 6) + "..." + accounts[0].substring(accounts[0].length-4, accounts[0].length)
   document.getElementById("wallet-disconnected").style.display = "none"
   document.getElementById("wallet-connected").style.display = "block"
 
