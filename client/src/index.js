@@ -60,12 +60,12 @@ const displayMyOptions = async () => {
       false /*exclude_exercised*/,
       false /*exclude_bought*/
     ).call()
+  setupPagination(options, pagination_element, rows_per_page);
   if(options.length == 0)
   {
     return "<p>You have no written options. Try writing a new one.</p>"
   }
   displayList(options, rows_per_page, current_page, result); 
-  setupPagination(options, pagination_element, rows_per_page);
   return result
 };
 
@@ -78,12 +78,12 @@ const displayOthersOptions = async () => {
       true /*exclude_exercised*/,
       true /*exclude_bought*/
     ).call()
+  setupPagination(options, pagination_element, rows_per_page);
   if(options.length == 0)
   {
     return "<p>Could now find any options. Try writing one.</p>"
   }
   displayList(options, rows_per_page, current_page, result); 
-  setupPagination(options, pagination_element, rows_per_page);
   return result
 };
 
@@ -99,12 +99,12 @@ const displayOptionsIBought = async () => {
       false /*exclude_exercised*/,
       false /*exclude_bought*/
     ).call()
+  setupPagination(options, pagination_element, rows_per_page);
   if(options.length == 0)
   {
     return "<p>You haven't bought any options. Try buying one.</p>"
   }
   displayList(options, rows_per_page, current_page, result); 
-  setupPagination(options, pagination_element, rows_per_page);
   return result
 };
 
