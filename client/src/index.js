@@ -125,6 +125,8 @@ async function displayList (items, rows_per_page, page, result) {
   result = "";
   page--;
 
+  items = [].concat(items).reverse();
+
   let start = rows_per_page * page;
   let end = start + rows_per_page;
   let paginatedItems = items.slice(start, end);
