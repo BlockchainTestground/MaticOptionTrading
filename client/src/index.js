@@ -176,10 +176,6 @@ function onBuyClick()
     var options_html = await displayOthersOptions()
     document.getElementById("main-content").innerHTML = options_html;
   }
-  const list_element = document.getElementById('list');
-  let current_page = 1;
-  let rows = 5;
-  displayList([1,2,3], list_element, rows, current_page);
   awaitOptions()
   
   document.getElementById("sell-button").classList.remove("is-active");
@@ -194,6 +190,8 @@ function onMyOptionsClick()
     var options_html = await displayMyOptions()
     document.getElementById("main-content").innerHTML = options_html;
   }
+  document.getElementById("sell-button").classList.remove("is-active");
+  document.getElementById("buy-button").classList.remove("is-active");
   awaitOptions()
 }
 
@@ -205,6 +203,8 @@ function onOptionsIBoughtClick()
     var options_html = await displayOptionsIBought()
     document.getElementById("main-content").innerHTML = options_html;
   }
+  document.getElementById("sell-button").classList.remove("is-active");
+  document.getElementById("buy-button").classList.remove("is-active");
   awaitOptions()
 }
 
