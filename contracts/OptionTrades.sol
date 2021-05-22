@@ -182,6 +182,7 @@ contract OptionTrades {
             }
         }
         uint[] memory result = new uint[](resultLength);
+        uint result_iterator = 0;
         for (uint i = 0; i < maticOpts.length; i++)
         {
             if(
@@ -193,7 +194,8 @@ contract OptionTrades {
                     || include_if_buyer && maticOpts[i].buyer == _address)
             )
             {
-                result[i] = i;
+                result[result_iterator] = i;
+                result_iterator += 1;
             }
         }
         return result;
@@ -219,6 +221,7 @@ contract OptionTrades {
             }
         }
         uint[] memory result = new uint[](resultLength);
+        uint result_iterator = 0;
         for (uint i = 0; i < maticOpts.length; i++)
         {
             if(
@@ -227,7 +230,8 @@ contract OptionTrades {
                 && !(exclude_exercised && maticOpts[i].canceled)
             )
             {
-                result[i] = i;
+                result[result_iterator] = i;
+                result_iterator += 1;
             }
         }
         return result;
