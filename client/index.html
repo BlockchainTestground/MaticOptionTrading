@@ -1,104 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>parménides.finance</title>
-        <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
-        <link rel='stylesheet'
-            href='https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.9.1/css/OverlayScrollbars.min.css'>
-        <link rel='stylesheet'
-            href='https://kingsora.github.io/OverlayScrollbars/etc/os-theme-thin-dark.css'>
-        <link rel="stylesheet" href="/style/style.css">
-        <link rel="stylesheet" href="/style/prism.css">
-        <link
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
-            rel="stylesheet">
-    </head>
-    <body>
-        <section class="hero is-primary">
-            <div class="hero-body">
-                <div class="columns">
-                    <div class="column is-12">
-                        <div class="container content">
-                            <i class="is-large fas fa-handshake"></i>
-                            <i class="is-large fas fa-chart-line"></i>
-                            <h1 class="title">Parmenides</h1>
-                            <h3 class="subtitle">
-                                Option trade with matic's ultra low gas fees
-                            </h3>
-                            <div id="wrong-network" style="display: none">
-                                <p>Wrong network, please connect to mumbai
-                                    testnet</p>
-                            </div>
-                            <div id="wallet-connected" style="display: none">
-                                <p id="my-address"></p>
-                                <a id="connect-button" class="button is-primary"
-                                    onclick="disconnectWallet()">
-                                    <span class="icon">
-                                        <i class="fas fa-wallet"></i>
-                                    </span>
-                                    <span>Logout</span>
-                                </a>
-                            </div>
-                            <div id="wallet-disconnected" style="display: none">
-                                <a id="connect-button" class="button is-primary"
-                                    onclick="connectWallet()">
-                                    <span class="icon">
-                                        <i class="fas fa-wallet"></i>
-                                    </span>
-                                    <span>Connect Wallet</span>
-                                </a>
-                            </div>
-                            <div id="loading-web3">
-                                <p>Loading web3...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>parménides.finance</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/1.9.1/css/OverlayScrollbars.min.css'>
+    <link rel='stylesheet' href='https://kingsora.github.io/OverlayScrollbars/etc/os-theme-thin-dark.css'>
+    <link rel="stylesheet" href="/style/style.css">
+    <link rel="stylesheet" href="/style/prism.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <section class="hero is-primary">
+    <div class="hero-body">
+      <div id="navbar"></div>
+      <div class="columns">
+        <div class="column is-12">
+          <div class="container content">
+            <div id="wrong-network" style="display: none">
+              <p>Wrong network, please connect to mumbai testnet</p>
             </div>
-        </section>
-        <section class="section">
-            <div class="container">
-                <div class="columns">
-                    <div class="column is-3">
-                        <aside class="is-medium menu">
-                            <p class="menu-label">
-                                menu
-                            </p>
-                            <ul class="menu-list">
-                                <li class="is-right"><a onclick="onWriteClick()"
-                                        class="is-active"><i class="fas
-                                            fa-pencil-alt"></i>Write an option</a></li>
-                                <li><a onclick="onExploreClick()"
-                                        class="is-active"><i class="far
-                                            fa-compass"></i> Explore</a></li>
-                                <li><a onclick="onYourOptionsClick()"
-                                        class="is-active"><i class="fas
-                                            fa-user"></i> Your options</a></li>
-                                <li><a onclick="onOptionsYouBoughtClick()"
-                                        class="is-active"><i class="fas
-                                            fa-receipt"></i> Option you bought</a></li>
-                            </ul>
-                        </aside>
-                    </div>
-                    <div class="column is-9">
-                        <h3 id="main-content-title" class="title is-3"></h3>
-                        <div id="main-content" class="content is-medium">
-                        </div>
-                        <div class="pagenumbers" id="pagination"></div>
-                    </div>
-                </div>
+            <div id="loading-web3">
+              <p>Loading web3...</p>
             </div>
-        </section>
-        <div id="footer"></div>
-        <script type="text/javascript"
-            src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src='https://cdn.jsdelivr.net/npm/big.js@6.0.0/big.min.js'></script>
-        <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
-        <script type="text/javascript" src="src/utils.js"></script>
-        <script type="text/javascript" src="src/index.js"></script>
-    </body>
+            <i class="is-large fas fa-handshake"></i>
+            <i class="is-large fas fa-chart-line"></i>
+            <h1 class="title">Parmenides</h1>
+            <h3 class="subtitle">
+              Option trade with matic's ultra low gas fees
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-3">
+          <aside class="is-medium menu">
+        <p class="menu-label">
+          menu
+        </p>
+        <ul class="menu-list">
+          <li class="is-right"><a onclick="onSellOptionClick()" class="is-active"><i class="fas fa-pencil-alt"></i> Sell option</a></li>
+          <li><a onclick="onBuyClick()" class="is-active"><i class="far fa-compass"></i> Buy option</a></li>
+        </ul>
+          </aside>
+        </div>
+        <div class="column is-9">
+            <h3 id="main-content-title" class="title is-3"></h3>
+                <div id="main-content" class="content is-medium"></div>
+                <div class="pagenumbers" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div id="footer"></div>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src='https://cdn.jsdelivr.net/npm/big.js@6.0.0/big.min.js'></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.5/web3.min.js"></script>
+  <script type="text/javascript" src="src/utils.js"></script>
+  <script type="text/javascript" src ="src/index.js"></script>
+</body>
 </html>
