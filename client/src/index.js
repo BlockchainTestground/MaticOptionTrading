@@ -194,6 +194,8 @@ function onMyOptionsClick()
     var options_html = await displayMyOptions()
     document.getElementById("main-content").innerHTML = options_html;
   }
+  document.getElementById("sell-button").classList.remove("is-active");
+  document.getElementById("buy-button").classList.remove("is-active");
   awaitOptions()
 }
 
@@ -205,6 +207,8 @@ function onOptionsIBoughtClick()
     var options_html = await displayOptionsIBought()
     document.getElementById("main-content").innerHTML = options_html;
   }
+  document.getElementById("sell-button").classList.remove("is-active");
+  document.getElementById("buy-button").classList.remove("is-active");
   awaitOptions()
 }
 
