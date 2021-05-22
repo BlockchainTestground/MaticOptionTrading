@@ -417,4 +417,6 @@ async function optionTradesApp() {
   awaitWeb3();
 }
 
-optionTradesApp()
+$( document ).ready(function() {
+  optionTradesApp()
+});
