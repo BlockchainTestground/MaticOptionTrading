@@ -1,3 +1,5 @@
+![Alt text](client/img/logo.png?raw=true)
+
 ## Dependencies
 
 ```bash
@@ -29,9 +31,6 @@ Create a new migration on the `./migrations/` directory following the same seque
 truffle migrate --network mumbai
 truffle migrate --network matic
 ```
-
-
-Option trading platform for matic frontend. The smart contract backbone is located in this [this repo](https://github.com/Turupawn/OptionTradingFrontend).
 
 ## Client
 
