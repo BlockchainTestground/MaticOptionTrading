@@ -141,9 +141,7 @@ async function displayList (items, rows_per_page, page, result) {
 
 function setupPagination (items, wrapper, rows_per_page) {
   wrapper.innerHTML = "";
-  console.log('items',items)
   let page_count = Math.ceil(items.length/rows_per_page);
-  console.log('page_count',page_count)
   for(let i =1; i <page_count + 1; i ++) {
     paginationButton(i);
     let btn = paginationButton(i,items);
