@@ -108,7 +108,6 @@ const displayOptionsIBought = async () => {
 function onSellOptionClick()
 {
   setupPagination([], pagination_element, rows_per_page);
-  document.getElementById("main-content-title").innerHTML = "Sell Option"
   document.getElementById("main-content").innerHTML = ""
   $("#main-content").load("html/write_option_form.html", function(){
     $("#strike").val(matic_price)
@@ -172,7 +171,6 @@ function paginationButton(page, items) {
 function onBuyClick()
 {
   var options_html;
-  document.getElementById("main-content-title").innerHTML = "Buy Option"
   document.getElementById("main-content").innerHTML = "<progress class='progress is-small is-primary' max='100'>15%</progress>"
   var awaitOptions = async function () {
     var options_html = await displayOthersOptions()
