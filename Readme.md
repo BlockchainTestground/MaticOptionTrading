@@ -1,5 +1,7 @@
 ![Alt text](client/img/logo.png?raw=true)
 
+Call and Put option trading with Matic's low gas fees.
+
 ## Dependencies
 
 ```bash
