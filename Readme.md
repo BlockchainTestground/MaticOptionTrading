@@ -1,16 +1,20 @@
-# Dependencies
+![Alt text](client/img/logo.png?raw=true)
+
+Call and Put option trading with Matic's low gas fees.
+
+## Dependencies
 
 ```bash
 npm install
 ```
 
-# Compile
+## Compile
 
 ```bash
 truffle compile
 ```
 
-# Related contracts and documentation
+## Related contracts and documentation
 
 This projects uses the [Link Token Contract](https://docs.chain.link/docs/link-token-contracts/) and [Chainlink Matic Price Feeds](https://data.chain.link/) on the [Polygon Network](https://docs.chain.link/docs/matic-addresses/). For more information read this chainlink's blog posts about [Option Exchanges](https://blog.chain.link/defi-call-option-exchange-in-solidity/) and about using [Price Feeds](https://blog.chain.link/matic-defi-price-feeds/).
 
@@ -21,7 +25,7 @@ This projects uses the [Link Token Contract](https://docs.chain.link/docs/link-t
   * Link Contract: `0x326C977E6efc84E512bB9C30f76E30c160eD06FB`
   * MATIC / USD: `0xd0D5e3DB44DE05E9F294BB0a3bEEaF030DE24Ada`
 
-# Deploy
+## Deploy
 
 Create a new migration on the `./migrations/` directory following the same sequence. Create a `.secret` file and paste your mnemonic. An then:
 
@@ -30,10 +34,7 @@ truffle migrate --network mumbai
 truffle migrate --network matic
 ```
 
-
-Option trading platform for matic frontend. The smart contract backbone is located in this [this repo](https://github.com/Turupawn/OptionTradingFrontend).
-
-# Client
+## Client
 
 Now run the client.
 
